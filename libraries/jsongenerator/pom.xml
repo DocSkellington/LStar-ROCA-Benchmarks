@@ -15,7 +15,7 @@
     <dependencies>
         <!-- External -->
         <dependency>
-            <groupId>com.github.jimblackler</groupId>
+            <groupId>net.jimblackler</groupId>
             <artifactId>jsonschemafriend</artifactId>
         </dependency>
         <dependency>

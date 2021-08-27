@@ -29,14 +29,25 @@
     </developers>
 
     <!--
+    ================================= REPOSITORIES ==============================
+    -->
+    <repositories>
+		<repository>
+		    <id>jitpack.io</id>
+		    <url>https://jitpack.io</url>
+		</repository>
+	</repositories>
+
+    <!--
     ================================= MODULES ===================================
     -->
     <modules>
+        <module>libraries</module>
         <module>oracles</module>
         <module>benchmarks</module>
     </modules>
 
-        <!--
+    <!--
     ===============================	SCM =======================
     -->
     <scm>
@@ -66,12 +77,15 @@
         <!-- Dependency versions -->
         <automatalib.version>0.11.0-SNAPSHOT</automatalib.version>
         <learnlib.version>0.17.0-SNAPSHOT</learnlib.version>
+        <json.version>20210307</json.version>
+        <jsonschemafriend.version>0.9.3</jsonschemafriend.version>
         <testng.version>7.4.0</testng.version>
         <checkstyle-plugin.version>3.0.0</checkstyle-plugin.version>
         <puppycrawl-plugin.version>8.10</puppycrawl-plugin.version>
         <checkstyle-rules-plugin.version>1.1.0</checkstyle-rules-plugin.version>
         <jacoco-plugin.version>0.8.1</jacoco-plugin.version>
         <javadoc-plugin.version>3.2.0</javadoc-plugin.version>
+        <source-plugin.version>3.2.1</source-plugin.version>
 
         <!-- Javadoc links -->
         <java.apidocs>http://docs.oracle.com/javase/8/docs/api/</java.apidocs>
@@ -85,6 +99,11 @@
     <dependencyManagement>
         <dependencies>
             <!-- Internal dependencies -->
+            <dependency>
+                <groupId>be.ac.umons.rocabenchmarks</groupId>
+                <artifactId>jsonbenchmarksroca-jsongenerator</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <dependency>
                 <groupId>be.ac.umons.rocabenchmarks</groupId>
                 <artifactId>rocabenchmarks-oracles</artifactId>
@@ -114,6 +133,19 @@
                 <scope>import</scope>
             </dependency>
 
+            <!-- JSON -->
+            <dependency>
+                <groupId>org.json</groupId>
+                <artifactId>json</artifactId>
+                <version>${json.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>net.jimblackler</groupId>
+                <artifactId>jsonschemafriend</artifactId>
+                <version>${jsonschemafriend.version}</version>
+            </dependency>
+
             <!-- TestNG -->
             <dependency>
                 <groupId>org.testng</groupId>
@@ -125,7 +157,7 @@
     </dependencyManagement>
 
     <!--
-    ================================= DEPENDENCIES ==============================
+    ================================= BUILD PLUGINS =============================
     -->
     <build>
         <pluginManagement>
@@ -151,39 +183,34 @@
                         <includeTestSourceDirectory>true</includeTestSourceDirectory>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>${source-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>${javadoc-plugin.version}</version>
+                    <configuration>
+                        <quiet>true</quiet>
+                        <source>${maven.compiler.source}</source>
+                        <detectLinks>true</detectLinks>
+                        <linksource>false</linksource>
+                        <links>
+                            <link>${java.apidocs}</link>
+                            <link>${automatalib.apidocs}</link>
+                            <link>${learnlib.apidocs}</link>
+                        </links>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>${jacoco-plugin.version}</version>
+                </plugin>
             </plugins>
         </pluginManagement>
-        <plugins>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>${jacoco-plugin.version}</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>${javadoc-plugin.version}</version>
-                <configuration>
-                    <quiet>true</quiet>
-                    <source>${maven.compiler.source}</source>
-                    <detectLinks>true</detectLinks>
-                    <linksource>false</linksource>
-                    <links>
-                        <link>${java.apidocs}</link>
-                        <link>${automatalib.apidocs}</link>
-                        <link>${learnlib.apidocs}</link>
-                    </links>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <configuration>
-                    <configLocation>com/github/ngeor/checkstyle.xml</configLocation>
-                    <includeTestSourceDirectory>true</includeTestSourceDirectory>
-                </configuration>
-            </plugin>
-        </plugins>
     </build>
 
     <!--
