@@ -27,7 +27,11 @@ import org.json.JSONObject;
 public class Generator {
   public static final Map<String, String> FORMAT_REGEXES;
   private static final int MAX_STRING_LENGTH = 60;
-  private static final int MAX_ADDITIONAL_PROPERTIES_KEY_LENGTH = 50;
+  private static final int MAX_ADDITIONAL_PROPERTIES_KEY_LENGTH = 2; // 50
+  private static final int INTEGER_MAX_VALUE = 5; // Integer.MAX_VALUE
+  private static final double DOUBLE_MAXIMUM_VALUE = 5.0; // Double.MAX_VALUE
+  private static final int ARRAY_MAXIMUM_LENGTH = 5; // Integer.MAX_VALUE
+  private static final int OBJECT_MAXIMUM_SIZE = 5; // Integer.MAX_VALUE
 
   static {
     Map<String, String> _formatRegex = new HashMap<>();
@@ -161,8 +165,8 @@ public class Generator {
       }
       case "number": {
         double minimum = getDouble(
-            schema.getMinimum(), getDouble(schema.getExclusiveMinimum(), -Double.MAX_VALUE));
-        double maximum = getDouble(schema.getMaximum(), Double.MAX_VALUE);
+            schema.getMinimum(), getDouble(schema.getExclusiveMinimum(), -DOUBLE_MAXIMUM_VALUE));
+        double maximum = getDouble(schema.getMaximum(), DOUBLE_MAXIMUM_VALUE);
         double value = random.nextDouble() % (maximum - minimum) + minimum;
         if (schema.getMultipleOf() != null) {
           double multipleOf = schema.getMultipleOf().doubleValue();
@@ -173,8 +177,8 @@ public class Generator {
         return value;
       }
       case "integer": {
-        long minimum = getLong(schema.getMinimum(), Integer.MIN_VALUE);
-        long maximum = getLong(schema.getMaximum(), Integer.MAX_VALUE - 1);
+        long minimum = getLong(schema.getMinimum(), -INTEGER_MAX_VALUE);
+        long maximum = getLong(schema.getMaximum(), INTEGER_MAX_VALUE);
         if (!schema.isExclusiveMaximumBoolean()) {
           maximum++;
         }
@@ -202,7 +206,7 @@ public class Generator {
         }
 
         long minLength = getLong(schema.getMinLength(), 0);
-        long maxLength = getLong(schema.getMaxLength(), Integer.MAX_VALUE - 1);
+        long maxLength = getLong(schema.getMaxLength(), MAX_STRING_LENGTH); // Integer.MAX_VALUE - 1
         if (!schema.isExclusiveMaximumBoolean()) {
           maxLength++;
         }
@@ -213,7 +217,7 @@ public class Generator {
         List<Schema> schemas = new ArrayList<>();
 
         long minItems = getLong(schema.getMinItems(), 0);
-        long maxItems = getLong(schema.getMaxItems(), Integer.MAX_VALUE);
+        long maxItems = getLong(schema.getMaxItems(), ARRAY_MAXIMUM_LENGTH);
 
         long length = random.nextInt(Math.max(maxTreeSize, 0) + 1);
         if (length < minItems) {
@@ -279,7 +283,7 @@ public class Generator {
         Collection<String> requiredProperties = schema.getRequiredProperties();
 
         long minProperties = getLong(schema.getMinProperties(), 0);
-        long maxProperties = getLong(schema.getMaxProperties(), Integer.MAX_VALUE);
+        long maxProperties = getLong(schema.getMaxProperties(), OBJECT_MAXIMUM_SIZE);
 
         long length = random.nextInt(Math.max(maxTreeSize, 0) + 1);
         if (length < minProperties) {
@@ -290,7 +294,9 @@ public class Generator {
           length = maxProperties;
         }
 
-        for (String property : requiredProperties) {
+        List<String> requiredPropertiesList = new ArrayList<>(requiredProperties);
+        Collections.shuffle(requiredPropertiesList, random);
+        for (String property : requiredPropertiesList) {
           Schema schema1 = properties.get(property);
           if (schema1 == null) {
             schema1 = anySchema;
