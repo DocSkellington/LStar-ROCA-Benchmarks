@@ -1,0 +1,12 @@
+{
+    "Title": "Fast",
+    "type": "object",
+    "required": ["string"],
+    "additionalProperties": false,
+    "properties": {
+        "string": {
+            "type": "string",
+            "maxLength": 2
+        }
+    }
+}
