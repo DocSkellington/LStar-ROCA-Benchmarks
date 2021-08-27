@@ -1,27 +1,43 @@
 package be.ac.umons.rocabenchmarks.oracles;
 
-import java.util.Collection;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import de.learnlib.api.oracle.MembershipOracle;
-import de.learnlib.api.query.Query;
+import de.learnlib.api.oracle.SingleQueryOracle.SingleQueryOracleROCA;
+import net.automatalib.words.Word;
+import net.jimblackler.jsonschemafriend.Schema;
+import net.jimblackler.jsonschemafriend.ValidationException;
+import net.jimblackler.jsonschemafriend.Validator;
 
-public class JSONMembershipOracle<I> implements MembershipOracle.RestrictedAutomatonMembershipOracle<I> {
+public class JSONMembershipOracle implements SingleQueryOracleROCA<Character> {
 
-    @Override
-    public void processQueries(Collection<? extends Query<I, Boolean>> arg0) {
-        // TODO Auto-generated method stub
-        
+    private final Schema schema;
+    private final Validator validator;
+
+    public JSONMembershipOracle(Schema schema) {
+        this.schema = schema;
+        this.validator = new Validator();
     }
 
     @Override
-    public int getCounterLimit() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
+    public Boolean answerQuery(Word<Character> prefix, Word<Character> suffix) {
+        Word<Character> word = prefix.concat(suffix);
+        if (!Utils.validWord(word)) {
+            return false;
+        }
+        JSONObject json;
+        try {
+            json = new JSONObject(Utils.wordToString(word));
+        }
+        catch (JSONException e) {
+            return false;
+        }
 
-    @Override
-    public void setCounterLimit(int arg0) {
-        // TODO Auto-generated method stub
-        
+        try {
+            validator.validate(schema, json);
+        } catch (ValidationException e) {
+            return false;
+        }
+        return true;
     }
 }

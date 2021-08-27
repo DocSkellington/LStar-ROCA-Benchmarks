@@ -1,16 +1,15 @@
 package be.ac.umons.rocabenchmarks.oracles;
 
-import java.util.Collection;
+import de.learnlib.api.oracle.SingleQueryOracle.SingleQueryCounterValueOracle;
+import net.automatalib.words.Word;
 
-import de.learnlib.api.oracle.MembershipOracle;
-import de.learnlib.api.query.Query;
-
-public class JSONCounterValueOracle<I> implements MembershipOracle.CounterValueOracle<I> {
+public class JSONCounterValueOracle implements SingleQueryCounterValueOracle<Character> {
 
     @Override
-    public void processQueries(Collection<? extends Query<I, Integer>> arg0) {
-        // TODO Auto-generated method stub
-        
+    public Integer answerQuery(Word<Character> prefix, Word<Character> suffix) {
+        Word<Character> word = prefix.concat(suffix);
+
+        return Utils.countUnmatched(word);
     }
     
 }
