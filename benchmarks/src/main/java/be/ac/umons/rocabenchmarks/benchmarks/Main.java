@@ -6,13 +6,12 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Random;
-import java.util.Scanner;
 
+import be.ac.umons.rocabenchmarks.JSONSymbol;
 import be.ac.umons.rocabenchmarks.oracles.JSONCounterValueOracle;
 import be.ac.umons.rocabenchmarks.oracles.JSONEquivalenceOracle;
 import be.ac.umons.rocabenchmarks.oracles.JSONMembershipOracle;
 import be.ac.umons.rocabenchmarks.oracles.JSONPartialEquivalenceOracle;
-import de.learnlib.algorithms.lstar.roca.LStarROCA;
 import de.learnlib.algorithms.lstar.roca.ROCAExperiment;
 import de.learnlib.api.oracle.EquivalenceOracle;
 import de.learnlib.api.oracle.MembershipOracle;
@@ -21,14 +20,13 @@ import de.learnlib.util.statistics.SimpleProfiler;
 import net.automatalib.automata.oca.ROCA;
 import net.automatalib.serialization.dot.GraphDOT;
 import net.automatalib.words.GrowingAlphabet;
-import net.automatalib.words.impl.Alphabets;
 import net.automatalib.words.impl.GrowingMapAlphabet;
 import net.jimblackler.jsonschemafriend.GenerationException;
 import net.jimblackler.jsonschemafriend.Schema;
 import net.jimblackler.jsonschemafriend.SchemaStore;
 
 public class Main {
-    private static int NUMBER_OF_TESTS = 1000;
+    private static int NUMBER_OF_TESTS = 10;
 
     public static void main(String[] args) throws IOException, GenerationException {
         SchemaStore schemaStore = new SchemaStore();
@@ -49,22 +47,22 @@ public class Main {
         outputDirectory = outputPath.toFile();
         outputDirectory.mkdir();
 
-        GrowingAlphabet<Character> alphabet = new GrowingMapAlphabet<>();
+        GrowingAlphabet<JSONSymbol> alphabet = new GrowingMapAlphabet<>();
 
         Random random = new Random();
 
-        MembershipOracle.ROCAMembershipOracle<Character> membershipOracle = new JSONMembershipOracle(schema);
-        MembershipOracle.CounterValueOracle<Character> counterValueOracle = new JSONCounterValueOracle();
-        EquivalenceOracle.RestrictedAutomatonEquivalenceOracle<Character> partialEquivalenceOracle = new JSONPartialEquivalenceOracle(NUMBER_OF_TESTS, schema, schemaStore, random);
-        EquivalenceOracle.ROCAEquivalenceOracle<Character> equivalenceOracle = new JSONEquivalenceOracle(NUMBER_OF_TESTS, schema, schemaStore, random);
+        MembershipOracle.ROCAMembershipOracle<JSONSymbol> membershipOracle = new JSONMembershipOracle(schema);
+        MembershipOracle.CounterValueOracle<JSONSymbol> counterValueOracle = new JSONCounterValueOracle();
+        EquivalenceOracle.RestrictedAutomatonEquivalenceOracle<JSONSymbol> partialEquivalenceOracle = new JSONPartialEquivalenceOracle(NUMBER_OF_TESTS, schema, schemaStore, random);
+        EquivalenceOracle.ROCAEquivalenceOracle<JSONSymbol> equivalenceOracle = new JSONEquivalenceOracle(NUMBER_OF_TESTS, schema, schemaStore, random);
 
-        LStarROCAGrowingAlphabet<Character> learningAlgorithm = new LStarROCAGrowingAlphabet<>(membershipOracle, counterValueOracle, partialEquivalenceOracle, alphabet);
-        ROCAExperiment<Character> experiment = new ROCAExperiment<>(learningAlgorithm, equivalenceOracle, alphabet, outputPath);
+        LStarROCAGrowingAlphabet<JSONSymbol> learningAlgorithm = new LStarROCAGrowingAlphabet<>(membershipOracle, counterValueOracle, partialEquivalenceOracle, alphabet);
+        ROCAExperiment<JSONSymbol> experiment = new ROCAExperiment<>(learningAlgorithm, equivalenceOracle, alphabet, outputPath);
         experiment.setLogModels(false);
         experiment.setProfile(true);
         experiment.run();
 
-        ROCA<?, Character> result = experiment.getFinalHypothesis();
+        ROCA<?, JSONSymbol> result = experiment.getFinalHypothesis();
 
         System.out.println("-------------------------------------------------------");
 

@@ -3,13 +3,15 @@ package be.ac.umons.rocabenchmarks.oracles;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import be.ac.umons.rocabenchmarks.JSONSymbol;
+import be.ac.umons.rocabenchmarks.WordConversion;
 import de.learnlib.api.oracle.SingleQueryOracle.SingleQueryOracleROCA;
 import net.automatalib.words.Word;
 import net.jimblackler.jsonschemafriend.Schema;
 import net.jimblackler.jsonschemafriend.ValidationException;
 import net.jimblackler.jsonschemafriend.Validator;
 
-public class JSONMembershipOracle implements SingleQueryOracleROCA<Character> {
+public class JSONMembershipOracle implements SingleQueryOracleROCA<JSONSymbol> {
 
     private final Schema schema;
     private final Validator validator;
@@ -20,14 +22,15 @@ public class JSONMembershipOracle implements SingleQueryOracleROCA<Character> {
     }
 
     @Override
-    public Boolean answerQuery(Word<Character> prefix, Word<Character> suffix) {
-        Word<Character> word = prefix.concat(suffix);
-        if (!Utils.validWord(word)) {
+    public Boolean answerQuery(Word<JSONSymbol> prefix, Word<JSONSymbol> suffix) {
+        Word<JSONSymbol> word = prefix.concat(suffix);
+        String string = WordConversion.fromJSONSymbolWordToString(word);
+        if (!Utils.validWord(string)) {
             return false;
         }
         JSONObject json;
         try {
-            json = new JSONObject(Utils.wordToString(word));
+            json = new JSONObject(string);
         }
         catch (JSONException e) {
             return false;

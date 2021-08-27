@@ -6,6 +6,8 @@ import java.util.Random;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.json.JSONObject;
 
+import be.ac.umons.rocabenchmarks.JSONSymbol;
+import be.ac.umons.rocabenchmarks.WordConversion;
 import de.learnlib.api.oracle.EquivalenceOracle;
 import de.learnlib.api.query.DefaultQuery;
 import net.automatalib.automata.fsa.DFA;
@@ -19,7 +21,7 @@ import net.jimblackler.jsonschemafriend.SchemaStore;
 import net.jimblackler.jsonschemafriend.ValidationException;
 import net.jimblackler.jsonschemafriend.Validator;
 
-public class JSONPartialEquivalenceOracle implements EquivalenceOracle.RestrictedAutomatonEquivalenceOracle<Character> {
+public class JSONPartialEquivalenceOracle implements EquivalenceOracle.RestrictedAutomatonEquivalenceOracle<JSONSymbol> {
 
     private int counterLimit = 0;
     private final Generator generator;
@@ -39,7 +41,7 @@ public class JSONPartialEquivalenceOracle implements EquivalenceOracle.Restricte
     }
 
     @Override
-    public @Nullable DefaultQuery<Character, Boolean> findCounterExample(DFA<?, Character> hypothesis, Collection<? extends Character> inputs) {
+    public @Nullable DefaultQuery<JSONSymbol, Boolean> findCounterExample(DFA<?, JSONSymbol> hypothesis, Collection<? extends JSONSymbol> inputs) {
         for (int i = 0 ; i < numberTests ; i++) {
             boolean correctForSchema;
             JSONObject document = null;
@@ -54,7 +56,7 @@ public class JSONPartialEquivalenceOracle implements EquivalenceOracle.Restricte
                 correctForSchema = false;
             }
 
-            Word<Character> word = Word.fromString(document.toString());
+            Word<JSONSymbol> word = WordConversion.fromStringToJSONSymbolWord(document.toString());
             boolean correctForHypo = hypothesis.accepts(word);
 
             if (correctForSchema != correctForHypo) {

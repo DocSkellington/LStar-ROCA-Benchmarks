@@ -11,11 +11,12 @@ public class Utils {
         return builder.toString();
     }
 
-    public static int countUnmatched(Word<Character> word) {
+    public static int countUnmatched(String word) {
         int numberUnmatchedOpen = 0;
         boolean inString = false;
         boolean previousWasEscape = false;
-        for (Character character : word) {
+        for (int i = 0 ; i < word.length() ; i++) {
+            char character = word.charAt(i);
             if (!previousWasEscape && (character == '"' || character == '\'')) {
                 inString = !inString;
             }
@@ -32,8 +33,8 @@ public class Utils {
         return numberUnmatchedOpen;
     }
 
-    public static boolean validWord(Word<Character> word) {
-        if (word.isEmpty() || word.firstSymbol() != '{' || word.lastSymbol() != '}') {
+    public static boolean validWord(String word) {
+        if (word.isEmpty() || word.charAt(0) != '{' || word.charAt(word.length() - 1) != '}') {
             return false;
         }
 
@@ -41,7 +42,8 @@ public class Utils {
         boolean firstObject = true;
         boolean inString = false;
         boolean previousWasEscape = false;
-        for (Character character : word) {
+        for (int i = 0 ; i < word.length() ; i++) {
+            char character = word.charAt(i);
             if (numberUnmatchedOpen == 0 && !firstObject) {
                 return false;
             }

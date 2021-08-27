@@ -86,6 +86,7 @@
         <jacoco-plugin.version>0.8.1</jacoco-plugin.version>
         <javadoc-plugin.version>3.2.0</javadoc-plugin.version>
         <source-plugin.version>3.2.1</source-plugin.version>
+        <surefire.version>3.0.0-M5</surefire.version>
 
         <!-- Javadoc links -->
         <java.apidocs>http://docs.oracle.com/javase/8/docs/api/</java.apidocs>
@@ -203,6 +204,11 @@
                             <link>${learnlib.apidocs}</link>
                         </links>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${surefire.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.jacoco</groupId>

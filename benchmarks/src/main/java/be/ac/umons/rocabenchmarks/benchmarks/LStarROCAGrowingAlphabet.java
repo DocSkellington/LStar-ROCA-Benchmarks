@@ -18,11 +18,6 @@ import net.automatalib.words.Word;
 import net.automatalib.words.impl.Alphabets;
 
 public class LStarROCAGrowingAlphabet<I> extends LStarROCA<I> {
-
-    public static void main(String[] args) {
-        System.out.println("HELLO");
-    }
-
     private static final LearnLogger LOGGER = LearnLogger.getLogger(LStarROCAGrowingAlphabet.class);
 
     public LStarROCAGrowingAlphabet(MembershipOracle.ROCAMembershipOracle<I> membershipOracle,

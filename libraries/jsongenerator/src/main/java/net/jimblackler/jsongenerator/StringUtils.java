@@ -16,15 +16,15 @@ public class StringUtils {
       double d = random.nextDouble();
       if (d < 0.33) {
         // random lowercase
-        character = (char) (random.nextInt(26) + 'a');
+        character = (char) (random.nextInt(2) + 'a');
       }
       else if (d < 0.66) {
         // random uppercase
-        character = (char) (random.nextInt(26) + 'A');
+        character = (char) (random.nextInt(2) + 'A');
       }
       else {
         // random digit
-        character = (char) (random.nextInt(10) + '0');
+        character = (char) (random.nextInt(1) + '0');
       }
       stringBuilder.append(character);
     }

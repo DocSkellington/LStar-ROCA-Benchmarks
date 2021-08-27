@@ -6,6 +6,8 @@ import java.util.Random;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.json.JSONObject;
 
+import be.ac.umons.rocabenchmarks.JSONSymbol;
+import be.ac.umons.rocabenchmarks.WordConversion;
 import de.learnlib.api.oracle.EquivalenceOracle;
 import de.learnlib.api.query.DefaultQuery;
 import net.automatalib.automata.oca.ROCA;
@@ -19,7 +21,7 @@ import net.jimblackler.jsonschemafriend.SchemaStore;
 import net.jimblackler.jsonschemafriend.ValidationException;
 import net.jimblackler.jsonschemafriend.Validator;
 
-public class JSONEquivalenceOracle implements EquivalenceOracle.ROCAEquivalenceOracle<Character> {
+public class JSONEquivalenceOracle implements EquivalenceOracle.ROCAEquivalenceOracle<JSONSymbol> {
 
     private final Generator generator;
     private final Schema schema;
@@ -38,7 +40,7 @@ public class JSONEquivalenceOracle implements EquivalenceOracle.ROCAEquivalenceO
     }
 
     @Override
-    public @Nullable DefaultQuery<Character, Boolean> findCounterExample(ROCA<?, Character> hypo, Collection<? extends Character> inputs) {
+    public @Nullable DefaultQuery<JSONSymbol, Boolean> findCounterExample(ROCA<?, JSONSymbol> hypo, Collection<? extends JSONSymbol> inputs) {
         for (int maxTreeSize = 1 ; maxTreeSize <= 10 ; maxTreeSize++) {
             for (int i = 0 ; i < numberTests ; i++) {
                 boolean correctForSchema;
@@ -54,7 +56,7 @@ public class JSONEquivalenceOracle implements EquivalenceOracle.ROCAEquivalenceO
                     correctForSchema = false;
                 }
 
-                Word<Character> word = Word.fromString(document.toString());
+                Word<JSONSymbol> word = WordConversion.fromStringToJSONSymbolWord(document.toString());
                 boolean correctForHypo = hypo.accepts(word);
 
                 if (correctForSchema != correctForHypo) {
