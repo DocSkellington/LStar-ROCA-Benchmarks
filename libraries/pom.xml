@@ -14,6 +14,7 @@
     <description>Parent module for libraries</description>
 
     <modules>
+        <module>jsonschemafriend</module>
         <module>jsongenerator</module>
     </modules>
 </project>

@@ -16,6 +16,11 @@
         <!-- Internal -->
         <dependency>
             <groupId>be.ac.umons.rocabenchmarks</groupId>
+            <artifactId>jsonbenchmarksroca-jsonschemafriend</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>be.ac.umons.rocabenchmarks</groupId>
             <artifactId>jsonbenchmarksroca-jsongenerator</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -44,10 +49,6 @@
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>net.jimblackler</groupId>
-            <artifactId>jsonschemafriend</artifactId>
         </dependency>
 
         <!-- Test -->

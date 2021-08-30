@@ -13,11 +13,14 @@
     <description>Modified version of jimblackler's JSON generator (https://github.com/jimblackler/jsongenerator)</description>
 
     <dependencies>
-        <!-- External -->
+        <!-- Internal -->
         <dependency>
-            <groupId>net.jimblackler</groupId>
-            <artifactId>jsonschemafriend</artifactId>
+            <groupId>be.ac.umons.rocabenchmarks</groupId>
+            <artifactId>jsonbenchmarksroca-jsonschemafriend</artifactId>
+            <version>${project.version}</version>
         </dependency>
+
+        <!-- External -->
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
