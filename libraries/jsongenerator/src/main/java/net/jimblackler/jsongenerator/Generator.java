@@ -195,23 +195,24 @@ public class Generator {
         return value;
       }
       case "string": {
-        String pattern0 = FORMAT_REGEXES.get(schema.getFormat());
-        if (pattern0 != null) {
-          return patternReverser.reverse(pattern0, random);
-        }
+        return "\\A";
+        // String pattern0 = FORMAT_REGEXES.get(schema.getFormat());
+        // if (pattern0 != null) {
+        //   return patternReverser.reverse(pattern0, random);
+        // }
 
-        String pattern1 = schema.getPattern();
-        if (pattern1 != null) {
-          return patternReverser.reverse(pattern1, random);
-        }
+        // String pattern1 = schema.getPattern();
+        // if (pattern1 != null) {
+        //   return patternReverser.reverse(pattern1, random);
+        // }
 
-        long minLength = getLong(schema.getMinLength(), 0);
-        long maxLength = getLong(schema.getMaxLength(), MAX_STRING_LENGTH); // Integer.MAX_VALUE - 1
-        if (!schema.isExclusiveMaximumBoolean()) {
-          maxLength++;
-        }
-        long useMaxLength = Math.min(maxLength, minLength + MAX_STRING_LENGTH);
-        return randomString(random, (int) minLength, (int) useMaxLength);
+        // long minLength = getLong(schema.getMinLength(), 0);
+        // long maxLength = getLong(schema.getMaxLength(), MAX_STRING_LENGTH); // Integer.MAX_VALUE - 1
+        // if (!schema.isExclusiveMaximumBoolean()) {
+        //   maxLength++;
+        // }
+        // long useMaxLength = Math.min(maxLength, minLength + MAX_STRING_LENGTH);
+        // return randomString(random, (int) minLength, (int) useMaxLength);
       }
       case "array": {
         List<Schema> schemas = new ArrayList<>();
