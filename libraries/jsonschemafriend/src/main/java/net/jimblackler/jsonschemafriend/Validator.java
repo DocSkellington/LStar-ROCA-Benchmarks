@@ -259,26 +259,6 @@ public class Validator {
 
     } else if (object instanceof String) {
       String string = (String) object;
-      int unicodeCompliantLength = string.codePointCount(0, string.length());
-      Number minLength = schema.getMinLength();
-      Number maxLength = schema.getMaxLength();
-      if (maxLength != null && unicodeCompliantLength > maxLength.intValue()) {
-        error.accept(new MaxLengthError(uri, document, schema));
-      }
-      if (minLength != null && unicodeCompliantLength < minLength.intValue()) {
-        error.accept(new MinLengthError(uri, document, schema));
-      }
-      String patternString = schema.getPattern();
-      if (patternString != null) {
-        try {
-          if (!regExPatternSupplier.newPattern(patternString).matches(string)) {
-            error.accept(new PatternError(uri, document, schema));
-          }
-        } catch (InvalidRegexException e) {
-          LOG.warning("Invalid regex " + patternString);
-        }
-      }
-
       String format = schema.getFormat();
       if (format != null) {
         String message =
@@ -288,31 +268,53 @@ public class Validator {
         }
       }
       String stringToValidate = string;
-      String contentEncoding = schema.getContentEncoding();
-
-      if ("base64".equals(contentEncoding)) {
-        Base64.Decoder urlDecoder = getUrlDecoder();
-        byte[] decoded = null;
-        try {
-          decoded = urlDecoder.decode(string);
-        } catch (IllegalArgumentException e) {
-          error.accept(new ContentEncodingError(uri, document, schema, e.getMessage()));
-        }
-        if (decoded != null) {
-          stringToValidate = new String(decoded, StandardCharsets.UTF_8);
-        }
+      if (!stringToValidate.equals("\\A") && !stringToValidate.isEmpty()) {
+        error.accept(new FormatError(uri, document, schema, "All strings should be equal to \\A or be empty"));
       }
 
-      String contentMediaType = schema.getContentMediaType();
-      if ("application/json".equals(contentMediaType)) {
-        try {
-          new JSONArray("[" + stringToValidate + "]");
-        } catch (JSONException e) {
-          error.accept(new ContentEncodingError(uri, document, schema, e.getMessage()));
-        }
-      }
+      // int unicodeCompliantLength = string.codePointCount(0, string.length());
+      // Number minLength = schema.getMinLength();
+      // Number maxLength = schema.getMaxLength();
+      // if (maxLength != null && unicodeCompliantLength > maxLength.intValue()) {
+      //   error.accept(new MaxLengthError(uri, document, schema));
+      // }
+      // if (minLength != null && unicodeCompliantLength < minLength.intValue()) {
+      //   error.accept(new MinLengthError(uri, document, schema));
+      // }
+      // String patternString = schema.getPattern();
+      // if (patternString != null) {
+      //   try {
+      //     if (!regExPatternSupplier.newPattern(patternString).matches(string)) {
+      //       error.accept(new PatternError(uri, document, schema));
+      //     }
+      //   } catch (InvalidRegexException e) {
+      //     LOG.warning("Invalid regex " + patternString);
+      //   }
+      // }
 
-      typeCheck(schema, document, uri, setOf("string"), disallow, errorConsumer);
+      // if ("base64".equals(contentEncoding)) {
+      //   Base64.Decoder urlDecoder = getUrlDecoder();
+      //   byte[] decoded = null;
+      //   try {
+      //     decoded = urlDecoder.decode(string);
+      //   } catch (IllegalArgumentException e) {
+      //     error.accept(new ContentEncodingError(uri, document, schema, e.getMessage()));
+      //   }
+      //   if (decoded != null) {
+      //     stringToValidate = new String(decoded, StandardCharsets.UTF_8);
+      //   }
+      // }
+
+      // String contentMediaType = schema.getContentMediaType();
+      // if ("application/json".equals(contentMediaType)) {
+      //   try {
+      //     new JSONArray("[" + stringToValidate + "]");
+      //   } catch (JSONException e) {
+      //     error.accept(new ContentEncodingError(uri, document, schema, e.getMessage()));
+      //   }
+      // }
+
+      // typeCheck(schema, document, uri, setOf("string"), disallow, errorConsumer);
     } else if (object instanceof Boolean) {
       typeCheck(schema, document, uri, setOf("boolean"), disallow, errorConsumer);
     } else if (object instanceof JSONArray) {
