@@ -1,6 +1,5 @@
 package be.ac.umons.rocabenchmarks.benchmarks;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -10,7 +9,6 @@ import de.learnlib.api.logging.LearnLogger;
 import de.learnlib.api.oracle.EquivalenceOracle;
 import de.learnlib.api.oracle.MembershipOracle;
 import de.learnlib.api.query.DefaultQuery;
-import de.learnlib.datastructure.observationtable.OTUtils;
 import de.learnlib.datastructure.observationtable.Row;
 import de.learnlib.util.MQUtil;
 import net.automatalib.words.GrowingAlphabet;
@@ -21,9 +19,9 @@ public class LStarROCAGrowingAlphabet<I> extends LStarROCA<I> {
     private static final LearnLogger LOGGER = LearnLogger.getLogger(LStarROCAGrowingAlphabet.class);
 
     public LStarROCAGrowingAlphabet(MembershipOracle.ROCAMembershipOracle<I> membershipOracle,
-        MembershipOracle.CounterValueOracle<I> counterValueOracle,
-        EquivalenceOracle.RestrictedAutomatonEquivalenceOracle<I> automatonWithCounterValuesEquivalenceOracle,
-        GrowingAlphabet<I> alphabet) {
+            MembershipOracle.CounterValueOracle<I> counterValueOracle,
+            EquivalenceOracle.RestrictedAutomatonEquivalenceOracle<I> automatonWithCounterValuesEquivalenceOracle,
+            GrowingAlphabet<I> alphabet) {
         super(membershipOracle, counterValueOracle, automatonWithCounterValuesEquivalenceOracle, alphabet);
     }
 

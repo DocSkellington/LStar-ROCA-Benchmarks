@@ -6,7 +6,8 @@ import net.automatalib.words.Word;
 import net.automatalib.words.WordBuilder;
 
 /**
- * Utility functions to convert a character word (or a string) to a JSONSymbol word, and vice-versa.
+ * Utility functions to convert a character word (or a string) to a JSONSymbol
+ * word, and vice-versa.
  * 
  * @author Gaëtan Staquet
  */
@@ -15,114 +16,43 @@ public class WordConversion {
         WordBuilder<JSONSymbol> wordBuilder = new WordBuilder<>();
         boolean inString = false;
         String lastSymbols = new String();
-        for (int i = 0 ; i < string.length() ; i++) {
+        boolean escaped = false;
+        for (int i = 0; i < string.length(); i++) {
             char character = string.charAt(i);
-            if (character == '"') {
-                if (!inString) {
+            if (inString) {
+                if (character == '\\' && !escaped) {
+                    escaped = true;
+                } else if (character == '"' && !escaped) {
                     if (!lastSymbols.isEmpty()) {
                         wordBuilder.add(toSymbol(lastSymbols));
                         lastSymbols = new String();
                     }
                     wordBuilder.add(toSymbol('"'));
+                    inString = false;
+                } else {
+                    escaped = false;
+                    lastSymbols = lastSymbols + character;
                 }
-                else {
-                    lastSymbols = lastSymbols.concat("\"");
-                }
-                inString = !inString;
-            }
-            else if (character == ':') {
-                if (inString) {
-                    wordBuilder.add(toSymbol(':'));
-                }
-                else {
-                    lastSymbols = lastSymbols.concat(":");
-                }
-            }
-            else if (character == '{') {
-                if (inString) {
-                    wordBuilder.add(toSymbol('{'));
-                }
-                else {
-                    lastSymbols = lastSymbols.concat("{");
-                }
-            }
-            else if (character == ' ') {
-                if (inString) {
-                    wordBuilder.add(toSymbol(' '));
-                }
-            }
-            else {
-                if (!lastSymbols.isEmpty()) {
-                    wordBuilder.add(toSymbol(lastSymbols));
-                    lastSymbols = new String();
-                }
-                wordBuilder.add(toSymbol(character));
-            }
-        }
-        
-        return wordBuilder.toWord();
-    }
-
-    public static Word<JSONSymbol> fromCharacterWordToJSONSymbolWord(Word<Character> word) {
-        WordBuilder<JSONSymbol> wordBuilder = new WordBuilder<>();
-        boolean inString = false;
-        String lastSymbols = new String();
-        for (int i = 0 ; i < word.length() ; i++) {
-            char character = word.getSymbol(i);
-            if (character == '"') {
-                if (!inString) {
+            } else {
+                if (character == '"' || Character.isDigit(character)) {
                     if (!lastSymbols.isEmpty()) {
                         wordBuilder.add(toSymbol(lastSymbols));
                         lastSymbols = new String();
                     }
-                    wordBuilder.add(toSymbol('"'));
+                    wordBuilder.add(toSymbol(character));
+                    if (character == '"') {
+                        inString = true;
+                    }
                 }
-                else {
-                    lastSymbols = lastSymbols.concat("\"");
-                }
-                inString = !inString;
-            }
-            else if (character == ':') {
-                if (inString) {
-                    wordBuilder.add(toSymbol(':'));
-                }
-                else {
-                    lastSymbols = lastSymbols.concat(":");
+                else if (character != ' ') {
+                    lastSymbols += character;
                 }
             }
-            else if (character == '{') {
-                if (inString) {
-                    wordBuilder.add(toSymbol('{'));
-                }
-                else {
-                    lastSymbols = lastSymbols.concat("{");
-                }
-            }
-            else if (character == ' ') {
-                if (inString) {
-                    wordBuilder.add(toSymbol(' '));
-                }
-            }
-            else {
-                if (!lastSymbols.isEmpty()) {
-                    wordBuilder.add(toSymbol(lastSymbols));
-                    lastSymbols = new String();
-                }
-                wordBuilder.add(toSymbol(character));
-            }
-        }
-        
-        return wordBuilder.toWord();
-    }
 
-    public static Word<Character> fromJSONSymbolWordToCharacterWord(Word<JSONSymbol> word) {
-        WordBuilder<Character> wordBuilder = new WordBuilder<>();
-        for (JSONSymbol symbol : word) {
-            String string = symbol.toString();
-            for (int i = 0 ; i < string.length() ; i++) {
-                Character c = string.charAt(i);
-                wordBuilder.add(c);
-            }
+        }
+
+        if (!lastSymbols.isEmpty()) {
+            wordBuilder.add(toSymbol(lastSymbols));
         }
         return wordBuilder.toWord();
     }
@@ -131,7 +61,7 @@ public class WordConversion {
         StringBuilder stringBuilder = new StringBuilder();
         for (JSONSymbol symbol : word) {
             String string = symbol.toString();
-            for (int i = 0 ; i < string.length() ; i++) {
+            for (int i = 0; i < string.length(); i++) {
                 stringBuilder.append(string.charAt(i));
             }
         }

@@ -1,5 +1,7 @@
 package be.ac.umons.rocabenchmarks;
 
+import java.util.Objects;
+
 import net.automatalib.words.abstractimpl.AbstractSymbol;
 
 /**
@@ -45,6 +47,11 @@ public class JSONSymbol extends AbstractSymbol<JSONSymbol> {
     @Override
     public String toString() {
         return actualSymbols;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(actualSymbols);
     }
     
 }

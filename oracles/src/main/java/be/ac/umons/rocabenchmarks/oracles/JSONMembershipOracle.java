@@ -30,9 +30,9 @@ public class JSONMembershipOracle implements SingleQueryOracleROCA<JSONSymbol> {
         }
         JSONObject json;
         try {
-            json = new JSONObject(string);
-        }
-        catch (JSONException e) {
+            // We escape the "\A" symbols in the document (to avoid errors from JSONObject)
+            json = new JSONObject(string.replace("\\A", "\\\\A"));
+        } catch (JSONException e) {
             return false;
         }
 
