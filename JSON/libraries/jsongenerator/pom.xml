@@ -1,0 +1,36 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>be.ac.umons.jsonroca</groupId>
+        <artifactId>jsonroca-libraries-parent</artifactId>
+        <version>0.1-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>jsonroca-jsongenerator</artifactId>
+
+    <name>Learning JSON Schema :: JSON generator</name>
+    <description>Modified version of jimblackler's JSON generator (https://github.com/jimblackler/jsongenerator)</description>
+
+    <dependencies>
+        <!-- Internal -->
+        <dependency>
+            <groupId>be.ac.umons.jsonroca</groupId>
+            <artifactId>jsonroca-jsonschemafriend</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- External -->
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+        </dependency>
+
+        <!-- Test -->
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>

@@ -1,0 +1,12 @@
+{
+    "$schema": "../schema/codecov.json",
+    "coverage": {
+        "status": true,
+        "notify": {
+            "email": {
+                "url": "dummy@mail.com"
+            }
+        },
+        "precision": 6
+    }
+}

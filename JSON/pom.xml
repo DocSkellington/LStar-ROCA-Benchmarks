@@ -5,12 +5,13 @@
     <!--
     ================================= PROJECT INFO ==============================
     -->
-    <groupId>be.ac.umons.rocabenchmarks</groupId>
-    <artifactId>rocabenchmarks</artifactId>
+    <groupId>be.ac.umons.jsonroca</groupId>
+    <artifactId>jsonroca</artifactId>
     <version>0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
 
-    <name>ROCA benchmarks</name>
-    <description>Benchmarks for L*-based learning algorithm for ROCAs</description>
+    <name>Learning JSON Schema</name>
+    <description>L*-based learning algorithm for JSON documents</description>
     <!-- TODO Add license information -->
 
     <developers>
@@ -26,6 +27,25 @@
             </roles>
         </developer>
     </developers>
+
+    <!--
+    ================================= REPOSITORIES ==============================
+    -->
+    <repositories>
+		<repository>
+		    <id>jitpack.io</id>
+		    <url>https://jitpack.io</url>
+		</repository>
+	</repositories>
+
+    <!--
+    ================================= MODULES ===================================
+    -->
+    <modules>
+        <module>libraries</module>
+        <module>oracles</module>
+        <module>algorithm</module>
+    </modules>
 
     <!--
     ===============================	SCM =======================
@@ -55,9 +75,9 @@
         <javadoc-plugin.conf.release>8</javadoc-plugin.conf.release>
 
         <!-- Dependency versions -->
-        <jsonroca.version>0.1-SNAPSHOT</jsonroca.version>
         <automatalib.version>0.11.0-SNAPSHOT</automatalib.version>
         <learnlib.version>0.17.0-SNAPSHOT</learnlib.version>
+        <json.version>20210307</json.version>
         <testng.version>7.4.0</testng.version>
         <checkstyle-plugin.version>3.0.0</checkstyle-plugin.version>
         <puppycrawl-plugin.version>8.10</puppycrawl-plugin.version>
@@ -66,7 +86,6 @@
         <javadoc-plugin.version>3.2.0</javadoc-plugin.version>
         <source-plugin.version>3.2.1</source-plugin.version>
         <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
-        <assembly-plugin.version>3.3.0</assembly-plugin.version>
 
         <!-- Javadoc links -->
         <java.apidocs>http://docs.oracle.com/javase/8/docs/api/</java.apidocs>
@@ -77,140 +96,162 @@
     <!--
     ================================= DEPENDENCIES ==============================
     -->
-    <dependencies>
-        <!-- Internal dependencies -->
-        <dependency>
-            <groupId>be.ac.umons.jsonroca</groupId>
-            <artifactId>jsonroca-jsonschemafriend</artifactId>
-            <version>${jsonroca.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>be.ac.umons.jsonroca</groupId>
-            <artifactId>jsonroca-jsongenerator</artifactId>
-            <version>${jsonroca.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>be.ac.umons.jsonroca</groupId>
-            <artifactId>jsonroca-oracles</artifactId>
-            <version>${jsonroca.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>be.ac.umons.jsonroca</groupId>
-            <artifactId>jsonroca-algorithm</artifactId>
-            <version>${jsonroca.version}</version>
-        </dependency>
+    <dependencyManagement>
+        <dependencies>
+            <!-- Internal dependencies -->
+            <dependency>
+                <groupId>be.ac.umons.jsonroca</groupId>
+                <artifactId>jsonroca-jsonschemafriend</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>be.ac.umons.jsonroca</groupId>
+                <artifactId>jsonroca-jsongenerator</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>be.ac.umons.jsonroca</groupId>
+                <artifactId>jsonroca-oracles</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>be.ac.umons.jsonroca</groupId>
+                <artifactId>jsonroca-algorithm</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+            </dependency>
 
-        <!-- AutomataLib and LearnLib -->
-        <dependency>
-            <groupId>net.automatalib.distribution</groupId>
-            <artifactId>automata-distribution</artifactId>
-            <version>${automatalib.version}</version>
-            <type>pom</type>
-        </dependency>
-        <dependency>
-            <groupId>de.learnlib.distribution</groupId>
-            <artifactId>learnlib-distribution</artifactId>
-            <version>${learnlib.version}</version>
-            <type>pom</type>
-        </dependency>
+            <!-- AutomataLib and LearnLib -->
+            <dependency>
+                <groupId>net.automatalib.distribution</groupId>
+                <artifactId>automata-distribution</artifactId>
+                <version>${automatalib.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>de.learnlib.distribution</groupId>
+                <artifactId>learnlib-distribution</artifactId>
+                <version>${learnlib.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
 
-        <!-- TestNG -->
-        <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-            <version>${testng.version}</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+            <!-- JSON -->
+            <dependency>
+                <groupId>org.json</groupId>
+                <artifactId>json</artifactId>
+                <version>${json.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.damnhandy</groupId>
+                <artifactId>handy-uri-templates</artifactId>
+                <version>2.1.7</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.mail</groupId>
+                <artifactId>javax.mail</artifactId>
+                <version>1.6.2</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-validator</groupId>
+                <artifactId>commons-validator</artifactId>
+                <version>1.7</version>
+            </dependency>
+            <dependency>
+                <groupId>net.jimblackler</groupId>
+                <artifactId>usejson</artifactId>
+                <version>0.1.4</version>
+            </dependency>
+            <dependency>
+                <groupId>org.graalvm.js</groupId>
+                <artifactId>js</artifactId>
+                <version>20.2.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.graalvm.sdk</groupId>
+                <artifactId>graal-sdk</artifactId>
+                <version>20.2.0</version>
+            </dependency>
+
+            <!-- TestNG -->
+            <dependency>
+                <groupId>org.testng</groupId>
+                <artifactId>testng</artifactId>
+                <version>${testng.version}</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <!--
     ================================= BUILD PLUGINS =============================
     -->
     <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>${checkstyle-plugin.version}</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.puppycrawl.tools</groupId>
-                        <artifactId>checkstyle</artifactId>
-                        <version>${puppycrawl-plugin.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>com.github.ngeor</groupId>
-                        <artifactId>checkstyle-rules</artifactId>
-                        <version>${checkstyle-rules-plugin.version}</version>
-                    </dependency>
-                </dependencies>
-                <configuration>
-                    <configLocation>com/github/ngeor/checkstyle.xml</configLocation>
-                    <includeTestSourceDirectory>true</includeTestSourceDirectory>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>${source-plugin.version}</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>${assembly-plugin.version}</version>
-                <executions>
-                    <execution>
-                    <phase>package</phase>
-                    <goals>
-                        <goal>single</goal>
-                    </goals>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <version>${checkstyle-plugin.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>com.puppycrawl.tools</groupId>
+                            <artifactId>checkstyle</artifactId>
+                            <version>${puppycrawl-plugin.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>com.github.ngeor</groupId>
+                            <artifactId>checkstyle-rules</artifactId>
+                            <version>${checkstyle-rules-plugin.version}</version>
+                        </dependency>
+                    </dependencies>
                     <configuration>
-                        <archive>
-                            <manifest>
-                                <addClasspath>true</addClasspath>
-                                <mainClass>be.ac.umons.rocabenchmarks.Main</mainClass>
-                            </manifest>
-                        </archive>
-                        <descriptorRefs>
-                            <descriptorRef>jar-with-dependencies</descriptorRef>
-                        </descriptorRefs>
+                        <configLocation>com/github/ngeor/checkstyle.xml</configLocation>
+                        <includeTestSourceDirectory>true</includeTestSourceDirectory>
                     </configuration>
-                </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>${javadoc-plugin.version}</version>
-                <configuration>
-                    <quiet>true</quiet>
-                    <source>${maven.compiler.source}</source>
-                    <detectLinks>true</detectLinks>
-                    <linksource>false</linksource>
-                    <links>
-                        <link>${java.apidocs}</link>
-                        <link>${automatalib.apidocs}</link>
-                        <link>${learnlib.apidocs}</link>
-                    </links>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>${surefire-plugin.version}</version>
-            </plugin>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>${jacoco-plugin.version}</version>
-            </plugin>
-        </plugins>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>${source-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>${javadoc-plugin.version}</version>
+                    <configuration>
+                        <quiet>true</quiet>
+                        <source>${maven.compiler.source}</source>
+                        <detectLinks>true</detectLinks>
+                        <linksource>false</linksource>
+                        <links>
+                            <link>${java.apidocs}</link>
+                            <link>${automatalib.apidocs}</link>
+                            <link>${learnlib.apidocs}</link>
+                        </links>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${surefire-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>${jacoco-plugin.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
 
     <!--
     ================================= REPORTING PLUGINS ==============================
     -->
-    <!-- <reporting>
+    <reporting>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -252,12 +293,12 @@
                 </reportSets>
             </plugin>
         </plugins>
-    </reporting> -->
+    </reporting>
 
     <!--
     ===============================	PROFILES =======================
     -->
-    <!-- <profiles>
+    <profiles>
         <profile>
             <id>jacoco</id>
             <activation>
@@ -321,5 +362,5 @@
                 </plugins>
             </build>
         </profile>
-    </profiles> -->
+    </profiles>
 </project>
