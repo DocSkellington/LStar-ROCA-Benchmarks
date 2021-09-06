@@ -1,101 +1,110 @@
 package be.ac.umons.rocabenchmarks.benchmarks;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Random;
 
-import be.ac.umons.rocabenchmarks.JSONSymbol;
-import be.ac.umons.rocabenchmarks.oracles.JSONCounterValueOracle;
-import be.ac.umons.rocabenchmarks.oracles.JSONEquivalenceOracle;
-import be.ac.umons.rocabenchmarks.oracles.JSONMembershipOracle;
-import be.ac.umons.rocabenchmarks.oracles.JSONPartialEquivalenceOracle;
+import de.learnlib.algorithms.lstar.roca.LStarROCA;
 import de.learnlib.algorithms.lstar.roca.ROCAExperiment;
 import de.learnlib.api.oracle.EquivalenceOracle;
-import de.learnlib.api.oracle.MembershipOracle;
-import de.learnlib.datastructure.observationtable.OTUtils;
+import de.learnlib.api.oracle.SingleQueryOracle;
+import de.learnlib.filter.statistic.oracle.CounterValueCounterOracle;
+import de.learnlib.filter.statistic.oracle.ROCACounterEQOracle;
+import de.learnlib.filter.statistic.oracle.ROCACounterOracle;
+import de.learnlib.oracle.equivalence.roca.ROCASimulatorEQOracle;
+import de.learnlib.oracle.equivalence.roca.RestrictedAutomatonCounterEQOracle;
+import de.learnlib.oracle.equivalence.roca.RestrictedAutomatonROCASimulatorEQOracle;
+import de.learnlib.oracle.membership.SimulatorOracle.ROCASimulatorOracle;
+import de.learnlib.oracle.membership.roca.CounterValueOracle;
 import de.learnlib.util.statistics.SimpleProfiler;
 import net.automatalib.automata.oca.ROCA;
-import net.automatalib.serialization.dot.GraphDOT;
-import net.automatalib.words.GrowingAlphabet;
-import net.automatalib.words.impl.GrowingMapAlphabet;
-import net.jimblackler.jsonschemafriend.GenerationException;
-import net.jimblackler.jsonschemafriend.Schema;
-import net.jimblackler.jsonschemafriend.SchemaStore;
+import net.automatalib.words.Alphabet;
+import net.automatalib.words.impl.Alphabets;
 
 public class Main {
-    private static int NUMBER_OF_TESTS = 10;
+    private static int NUMBER_OF_TESTS = 1000;
 
-    public static void main(String[] args) throws IOException, GenerationException {
-        SchemaStore schemaStore = new SchemaStore();
-        Schema schema;
-        try {
-            schema = schemaStore.loadSchema(Main.class.getResource("/schema/fast.json"));
-        } catch (GenerationException e) {
-            e.printStackTrace();
-            return;
+    public static void main(String[] args) throws IOException {
+        Alphabet<Character> alphabet = Alphabets.characters('a', 'c');
+        Random rand = new Random(302);
+        for (int size = 1 ; size <= 1 ; size++) {
+            for (int i = 0 ; i < 100 ; i++) {
+                RandomROCA<Character> randomROCA = new RandomROCA<>(rand, alphabet, size, 0.5);
+                runRandomROCA(randomROCA);
+            }
         }
 
-        Path outputPath = Paths.get(System.getProperty("user.home"), "Desktop", "JSON");
-        File outputDirectory = outputPath.toFile();
-        if (outputDirectory.exists()) {
-            deleteDirectory(outputDirectory);
-        }
-        assert outputDirectory.mkdir();
-        outputDirectory = outputPath.toFile();
-        outputDirectory.mkdir();
+        // SchemaStore schemaStore = new SchemaStore();
+        // Schema schema;
+        // try {
+        //     URL url = Main.class.getResource("/schema/codecov.json");
+        //     schema = schemaStore.loadSchema(url.toURI(), false);
+        // } catch (GenerationException e) {
+        //     e.printStackTrace();
+        //     return;
+        // } catch (URISyntaxException e) {
+        //     e.printStackTrace();
+        //     return;
+        // }
 
-        GrowingAlphabet<JSONSymbol> alphabet = new GrowingMapAlphabet<>();
+        // Path outputPath = Paths.get(System.getProperty("user.home"), "Desktop", "JSON");
+        // File outputDirectory = outputPath.toFile();
+        // if (outputDirectory.exists()) {
+        //     deleteDirectory(outputDirectory);
+        // }
+        // assert outputDirectory.mkdir();
+        // outputDirectory = outputPath.toFile();
+        // outputDirectory.mkdir();
 
-        Random random = new Random();
+        // GrowingAlphabet<JSONSymbol> alphabet = new GrowingMapAlphabet<>();
 
-        MembershipOracle.ROCAMembershipOracle<JSONSymbol> membershipOracle = new JSONMembershipOracle(schema);
-        MembershipOracle.CounterValueOracle<JSONSymbol> counterValueOracle = new JSONCounterValueOracle();
-        EquivalenceOracle.RestrictedAutomatonEquivalenceOracle<JSONSymbol> partialEquivalenceOracle = new JSONPartialEquivalenceOracle(NUMBER_OF_TESTS, schema, schemaStore, random);
-        EquivalenceOracle.ROCAEquivalenceOracle<JSONSymbol> equivalenceOracle = new JSONEquivalenceOracle(NUMBER_OF_TESTS, schema, schemaStore, random);
+        // Random random = new Random();
 
-        LStarROCAGrowingAlphabet<JSONSymbol> learningAlgorithm = new LStarROCAGrowingAlphabet<>(membershipOracle, counterValueOracle, partialEquivalenceOracle, alphabet);
-        ROCAExperiment<JSONSymbol> experiment = new ROCAExperiment<>(learningAlgorithm, equivalenceOracle, alphabet, outputPath);
-        experiment.setLogModels(false);
-        experiment.setProfile(true);
-        experiment.run();
+        // MembershipOracle.ROCAMembershipOracle<JSONSymbol> membershipOracle = new JSONMembershipOracle(schema);
+        // MembershipOracle.CounterValueOracle<JSONSymbol> counterValueOracle = new JSONCounterValueOracle();
+        // EquivalenceOracle.RestrictedAutomatonEquivalenceOracle<JSONSymbol> partialEquivalenceOracle = new JSONPartialEquivalenceOracle(NUMBER_OF_TESTS, schema, schemaStore, random);
+        // EquivalenceOracle.ROCAEquivalenceOracle<JSONSymbol> equivalenceOracle = new JSONEquivalenceOracle(NUMBER_OF_TESTS, schema, schemaStore, random);
 
-        ROCA<?, JSONSymbol> result = experiment.getFinalHypothesis();
+        // LStarROCAGrowingAlphabet<JSONSymbol> learningAlgorithm = new LStarROCAGrowingAlphabet<>(membershipOracle, counterValueOracle, partialEquivalenceOracle, alphabet);
+        // ROCAExperiment<JSONSymbol> experiment = new ROCAExperiment<>(learningAlgorithm, equivalenceOracle, alphabet, outputPath);
+        // experiment.setLogModels(false);
+        // experiment.setProfile(true);
+        // experiment.run();
 
-        System.out.println("-------------------------------------------------------");
+        // ROCA<?, JSONSymbol> result = experiment.getFinalHypothesis();
 
-        // profiling
-        System.out.println(SimpleProfiler.getResults());
+        // System.out.println("-------------------------------------------------------");
 
-        // learning statistics
-        System.out.println(experiment.getRounds().getSummary());
-        // System.out.println(equivalenceOracle.getStatisticalData().getSummary());
-        // System.out.println(restrictedEquivalenceOracle.getStatisticalData().getSummary());
-        // System.out.println(membershipOracle.getStatisticalData().getSummary());
-        // System.out.println(counterValueOracle.getStatisticalData().getSummary());
+        // // profiling
+        // System.out.println(SimpleProfiler.getResults());
 
-        // model statistics
-        System.out.println("States: " + result.size());
-        System.out.println("Sigma: " + alphabet.size());
+        // // learning statistics
+        // System.out.println(experiment.getRounds().getSummary());
+        // // System.out.println(equivalenceOracle.getStatisticalData().getSummary());
+        // // System.out.println(restrictedEquivalenceOracle.getStatisticalData().getSummary());
+        // // System.out.println(membershipOracle.getStatisticalData().getSummary());
+        // // System.out.println(counterValueOracle.getStatisticalData().getSummary());
 
-        // show model
-        System.out.println();
-        System.out.println("Model: ");
-        GraphDOT.write(result, System.out); // may throw IOException!
+        // // model statistics
+        // System.out.println("States: " + result.size());
+        // System.out.println("Sigma: " + alphabet.size());
 
-        // Visualization.visualize(result);
+        // // show model
+        // System.out.println();
+        // System.out.println("Model: ");
+        // GraphDOT.write(result, System.out); // may throw IOException!
 
-        System.out.println("-------------------------------------------------------");
+        // // Visualization.visualize(result);
 
-        // OTUtils.displayHTMLInBrowser(lstar_roca.getObservationTable().toClassicObservationTable());
+        // System.out.println("-------------------------------------------------------");
 
-        Path finalTable = outputPath.resolve("final.html");
-        OTUtils.writeHTMLToFile(learningAlgorithm.getObservationTable().toClassicObservationTable(), finalTable.toFile());
-        FileWriter finalModel = new FileWriter(outputPath.resolve("final.dot").toFile());
-        GraphDOT.write(result, finalModel);
-        finalModel.close();
+        // // OTUtils.displayHTMLInBrowser(lstar_roca.getObservationTable().toClassicObservationTable());
+
+        // Path finalTable = outputPath.resolve("final.html");
+        // OTUtils.writeHTMLToFile(learningAlgorithm.getObservationTable().toClassicObservationTable(), finalTable.toFile());
+        // FileWriter finalModel = new FileWriter(outputPath.resolve("final.dot").toFile());
+        // GraphDOT.write(result, finalModel);
+        // finalModel.close();
     }
 
     private static boolean deleteDirectory(File directory) {
@@ -108,4 +117,53 @@ public class Main {
         return directory.delete();
     }
 
+    private static <I> ROCA<?, I> runRandomROCA(RandomROCA<I> randomROCA) {
+        ROCA<?, I> target = randomROCA.getROCA();
+        Alphabet<I> alphabet = randomROCA.getAlphabet();
+
+        SingleQueryOracle.SingleQueryOracleROCA<I> sul = new ROCASimulatorOracle<>(
+                target);
+        ROCACounterOracle<I> membershipOracle = new ROCACounterOracle<>(sul,
+                "membership queries");
+
+        SingleQueryOracle.SingleQueryCounterValueOracle<I> counterValue = new CounterValueOracle<>(target);
+        // CounterValueHashCacheOracle<I> counterValueCache = new CounterValueHashCacheOracle<>(counterValue);
+        CounterValueCounterOracle<I> counterValueOracle = new CounterValueCounterOracle<>(counterValue,
+                "counter value queries");
+
+        EquivalenceOracle.ROCAEquivalenceOracle<I> eqOracle = new ROCASimulatorEQOracle<>(target);
+        ROCACounterEQOracle<I> equivalenceOracle = new ROCACounterEQOracle<>(eqOracle, "equivalence queries");
+
+        RestrictedAutomatonROCASimulatorEQOracle<I> resEqOracle = new RestrictedAutomatonROCASimulatorEQOracle<>(target,
+                alphabet);
+        RestrictedAutomatonCounterEQOracle<I> restrictedEquivalenceOracle = new RestrictedAutomatonCounterEQOracle<>(
+                resEqOracle, "partial equivalence queries");
+
+        LStarROCA<I> lstar_roca = new LStarROCA<>(membershipOracle, counterValueOracle, restrictedEquivalenceOracle,
+                alphabet);
+
+        ROCAExperiment<I> experiment = new ROCAExperiment<>(lstar_roca, equivalenceOracle, alphabet);
+        experiment.setLogModels(false);
+        experiment.setProfile(true);
+
+        experiment.run();
+
+        ROCA<?, I> result = experiment.getFinalHypothesis();
+
+        // profiling
+        System.out.println(SimpleProfiler.getResults());
+
+        // learning statistics
+        System.out.println(experiment.getRounds().getSummary());
+        System.out.println(equivalenceOracle.getStatisticalData().getSummary());
+        System.out.println(restrictedEquivalenceOracle.getStatisticalData().getSummary());
+        System.out.println(membershipOracle.getStatisticalData().getSummary());
+        System.out.println(counterValueOracle.getStatisticalData().getSummary());
+
+        // model statistics
+        System.out.println("States: " + result.size());
+        System.out.println("Sigma: " + alphabet.size());
+
+        return result;
+    }
 }
