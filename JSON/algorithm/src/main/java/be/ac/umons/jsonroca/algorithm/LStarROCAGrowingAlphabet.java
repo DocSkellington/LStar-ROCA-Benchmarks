@@ -11,6 +11,7 @@ import de.learnlib.api.oracle.MembershipOracle;
 import de.learnlib.api.query.DefaultQuery;
 import de.learnlib.datastructure.observationtable.Row;
 import de.learnlib.util.MQUtil;
+import de.learnlib.util.statistics.SimpleProfiler;
 import net.automatalib.words.GrowingAlphabet;
 import net.automatalib.words.Word;
 import net.automatalib.words.impl.Alphabets;
@@ -95,13 +96,17 @@ public class LStarROCAGrowingAlphabet<I> extends LStarROCA<I> {
     @Override
     protected void learnDFA() {
         while (true) {
-            LOGGER.logEvent("New round");
+            if (Thread.interrupted()) {
+                Thread.currentThread().interrupt();
+                return;
+            }
             updateHypothesis();
-            LOGGER.logEvent("Hypothesis updated");
+
+            SimpleProfiler.start(COUNTEREXAMPLE_DFA_PROFILE_KEY);;
             DefaultQuery<I, Boolean> ce = restrictedAutomatonEquivalenceOracle.findCounterExample(hypothesis, alphabet);
+            SimpleProfiler.stop(COUNTEREXAMPLE_DFA_PROFILE_KEY);;
 
             if (ce == null) {
-                LOGGER.logEvent("No counterexample found");
                 return;
             }
             assert MQUtil.isCounterexample(ce, hypothesis);
@@ -118,11 +123,11 @@ public class LStarROCAGrowingAlphabet<I> extends LStarROCA<I> {
             // accepted.
             // Therefore, we instead add the suffixes as separators.
             List<Word<I>> suffixes = ce.getInput().suffixes(false);
-            LOGGER.logEvent("Suffixes created");
             List<List<Row<I>>> unclosed = table.addSuffixes(suffixes, membershipOracle);
-            LOGGER.logEvent("New suffixes added in the table");
 
+            SimpleProfiler.start(CLOSED_TABLE_PROFILE_KEY);
             completeConsistentTable(unclosed, true);
+            SimpleProfiler.stop(CLOSED_TABLE_PROFILE_KEY);
 
             assert table.numberOfDistinctRows() > oldDistinctRows || table.numberOfSuffixes() > oldSuffixes
                     : "Nothing was learnt during the last iteration for DFA";
