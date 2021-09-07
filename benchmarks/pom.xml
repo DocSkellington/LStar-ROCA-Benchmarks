@@ -59,6 +59,7 @@
         <automatalib.version>0.11.0-SNAPSHOT</automatalib.version>
         <learnlib.version>0.17.0-SNAPSHOT</learnlib.version>
         <testng.version>7.4.0</testng.version>
+        <csv.version>1.9.0</csv.version>
         <checkstyle-plugin.version>3.0.0</checkstyle-plugin.version>
         <puppycrawl-plugin.version>8.10</puppycrawl-plugin.version>
         <checkstyle-rules-plugin.version>1.1.0</checkstyle-rules-plugin.version>
@@ -112,6 +113,13 @@
             <artifactId>learnlib-distribution</artifactId>
             <version>${learnlib.version}</version>
             <type>pom</type>
+        </dependency>
+
+        <!-- CSV -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-csv</artifactId>
+            <version>${csv.version}</version>
         </dependency>
 
         <!-- TestNG -->
@@ -168,7 +176,7 @@
                         <archive>
                             <manifest>
                                 <addClasspath>true</addClasspath>
-                                <mainClass>be.ac.umons.rocabenchmarks.Main</mainClass>
+                                <mainClass>be.ac.umons.rocabenchmarks.Benchmarks</mainClass>
                             </manifest>
                         </archive>
                         <descriptorRefs>
