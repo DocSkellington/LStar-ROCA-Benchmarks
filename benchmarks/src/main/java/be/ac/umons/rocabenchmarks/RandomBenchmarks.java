@@ -73,6 +73,7 @@ public class RandomBenchmarks {
                     Alphabet<Integer> alphabet = Alphabets.integers(0, alphabetSize - 1);
                     RandomROCA<Integer> randomROCA = new RandomROCA<>(alphabet, size, 0.5);
                     runExperiment(randomROCA, timeout);
+                    System.gc();
                 }
             }
         }
