@@ -30,7 +30,7 @@ public class Generator {
   private static final int MAX_ADDITIONAL_PROPERTIES_KEY_LENGTH = 2; // 50
   private static final int INTEGER_MAX_VALUE = 5; // Integer.MAX_VALUE
   private static final double DOUBLE_MAXIMUM_VALUE = 5.0; // Double.MAX_VALUE
-  private static final int ARRAY_MAXIMUM_LENGTH = 5; // Integer.MAX_VALUE
+  private static final int ARRAY_MAXIMUM_LENGTH = 10; // Integer.MAX_VALUE
   private static final int OBJECT_MAXIMUM_SIZE = 5; // Integer.MAX_VALUE
 
   static {
@@ -164,38 +164,40 @@ public class Generator {
         return random.nextBoolean();
       }
       case "number": {
-        double minimum = getDouble(
-            schema.getMinimum(), getDouble(schema.getExclusiveMinimum(), -DOUBLE_MAXIMUM_VALUE));
-        double maximum = getDouble(schema.getMaximum(), DOUBLE_MAXIMUM_VALUE);
-        double value = random.nextDouble() % (maximum - minimum) + minimum;
-        if (schema.getMultipleOf() != null) {
-          double multipleOf = schema.getMultipleOf().doubleValue();
-          int multiples = (int) (value / multipleOf);
-          value = multiples * multipleOf;
-        }
+        return "\\D";
+        // double minimum = getDouble(
+        //     schema.getMinimum(), getDouble(schema.getExclusiveMinimum(), -DOUBLE_MAXIMUM_VALUE));
+        // double maximum = getDouble(schema.getMaximum(), DOUBLE_MAXIMUM_VALUE);
+        // double value = random.nextDouble() % (maximum - minimum) + minimum;
+        // if (schema.getMultipleOf() != null) {
+        //   double multipleOf = schema.getMultipleOf().doubleValue();
+        //   int multiples = (int) (value / multipleOf);
+        //   value = multiples * multipleOf;
+        // }
 
-        return value;
+        // return value;
       }
       case "integer": {
-        long minimum = getLong(schema.getMinimum(), -INTEGER_MAX_VALUE);
-        long maximum = getLong(schema.getMaximum(), INTEGER_MAX_VALUE);
-        if (!schema.isExclusiveMaximumBoolean()) {
-          maximum++;
-        }
-        if (maximum - minimum == 0) {
-          throw new IllegalStateException();
-        }
-        long value = Math.abs(random.nextLong()) % (maximum - minimum) + minimum;
-        if (schema.getMultipleOf() != null) {
-          int multipleOf = schema.getMultipleOf().intValue();
-          long multiples = value / multipleOf;
-          value = multiples * multipleOf;
-        }
+        return "\\I";
+        // long minimum = getLong(schema.getMinimum(), -INTEGER_MAX_VALUE);
+        // long maximum = getLong(schema.getMaximum(), INTEGER_MAX_VALUE);
+        // if (!schema.isExclusiveMaximumBoolean()) {
+        //   maximum++;
+        // }
+        // if (maximum - minimum == 0) {
+        //   throw new IllegalStateException();
+        // }
+        // long value = Math.abs(random.nextLong()) % (maximum - minimum) + minimum;
+        // if (schema.getMultipleOf() != null) {
+        //   int multipleOf = schema.getMultipleOf().intValue();
+        //   long multiples = value / multipleOf;
+        //   value = multiples * multipleOf;
+        // }
 
-        return value;
+        // return value;
       }
       case "string": {
-        return "\\A";
+        return "\\S";
         // String pattern0 = FORMAT_REGEXES.get(schema.getFormat());
         // if (pattern0 != null) {
         //   return patternReverser.reverse(pattern0, random);
@@ -218,7 +220,7 @@ public class Generator {
         List<Schema> schemas = new ArrayList<>();
 
         long minItems = getLong(schema.getMinItems(), 0);
-        long maxItems = getLong(schema.getMaxItems(), ARRAY_MAXIMUM_LENGTH);
+        long maxItems = getLong(schema.getMaxItems(), minItems + ARRAY_MAXIMUM_LENGTH);
 
         long length = random.nextInt(Math.max(maxTreeSize, 0) + 1);
         if (length < minItems) {
