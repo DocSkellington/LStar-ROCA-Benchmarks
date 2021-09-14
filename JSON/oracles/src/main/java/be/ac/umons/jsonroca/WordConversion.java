@@ -24,27 +24,32 @@ public class WordConversion {
                     escaped = true;
                 } else if (character == '"' && !escaped) {
                     if (!lastSymbols.isEmpty()) {
-                        wordBuilder.add(toSymbol(lastSymbols));
+                        wordBuilder.add(toSymbol("\"" + lastSymbols + "\""));
                         lastSymbols = new String();
                     }
-                    wordBuilder.add(toSymbol('"'));
                     inString = false;
                 } else {
                     escaped = false;
                     lastSymbols = lastSymbols + character;
                 }
             } else {
-                if (character == '"' || Character.isDigit(character)) {
+                if (character == '"' || Character.isDigit(character) || character == ']' || character == '}' || character == ',') {
                     if (!lastSymbols.isEmpty()) {
                         wordBuilder.add(toSymbol(lastSymbols));
                         lastSymbols = new String();
                     }
-                    wordBuilder.add(toSymbol(character));
+                    if (character != '"') {
+                        wordBuilder.add(toSymbol(character));
+                    }
                     if (character == '"') {
                         inString = true;
                     }
                 }
                 else if (character != ' ') {
+                    if (Character.isAlphabetic(character) && (lastSymbols.equals(":") || lastSymbols.equals(","))) {
+                        wordBuilder.add(toSymbol(lastSymbols));
+                        lastSymbols = new String();
+                    }
                     lastSymbols += character;
                 }
             }
