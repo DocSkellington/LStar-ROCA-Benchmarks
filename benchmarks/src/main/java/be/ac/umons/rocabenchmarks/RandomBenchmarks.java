@@ -39,6 +39,7 @@ import de.learnlib.oracle.membership.SimulatorOracle.ROCASimulatorOracle;
 import de.learnlib.oracle.membership.roca.CounterValueOracle;
 import de.learnlib.util.statistics.SimpleProfiler;
 import net.automatalib.automata.oca.ROCA;
+import net.automatalib.serialization.dot.GraphDOT;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.impl.Alphabets;
 
@@ -67,7 +68,8 @@ public class RandomBenchmarks {
             "|S|",
             "|Ŝ \\ S|",
             "# of bin rows",
-            "Result target size"
+            "Result target size",
+            "DOT"
         );
         // @formatter:on
         this.nColumns = header.size();
@@ -131,7 +133,7 @@ public class RandomBenchmarks {
         });
 
         boolean finished;
-        boolean error = false;
+        Exception error = null;
         Stopwatch watch = Stopwatch.createStarted();
         try {
             handler.get(timeout.toMillis(), TimeUnit.MILLISECONDS);
@@ -141,8 +143,9 @@ public class RandomBenchmarks {
             finished = false;
         } catch (ExecutionException e) {
             handler.cancel(true);
-            error = true;
+            error = e;
             finished = false;
+            e.printStackTrace(System.err);
         }
         watch.stop();
         executor.shutdownNow();
@@ -169,10 +172,15 @@ public class RandomBenchmarks {
             results.add(table.numberOfForLanguageOnlySuffixes());
             results.add(table.numberOfBinShortPrefixRows());
             results.add(learntROCA.size());
-        } else if (error) {
-            for (int i = 2; i <= nColumns; i++) {
+
+            StringBuilder sb = new StringBuilder();
+            GraphDOT.write(learntROCA, sb);
+            results.add(sb.toString());
+        } else if (error != null) {
+            for (int i = 2; i <= nColumns - 1; i++) {
                 results.add("Error");
             }
+            results.add(error.toString());
         } else {
             for (int i = 2; i <= nColumns; i++) {
                 results.add("Timeout");

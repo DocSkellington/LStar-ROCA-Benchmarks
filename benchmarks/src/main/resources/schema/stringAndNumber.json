@@ -1,0 +1,14 @@
+{
+    "title": "A string and a number",
+    "type": "object",
+    "required": ["string", "number"],
+    "additionalProperties": false,
+    "properties": {
+        "string": {
+            "type": "string"
+        },
+        "number": {
+            "type": "number"
+        }
+    }
+}
