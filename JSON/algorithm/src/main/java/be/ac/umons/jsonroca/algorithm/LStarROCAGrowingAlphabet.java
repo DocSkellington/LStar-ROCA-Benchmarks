@@ -28,8 +28,7 @@ public class LStarROCAGrowingAlphabet<I> extends LStarROCA<I> {
 
     private void addNewSymbolsFromWord(Word<I> word) {
         for (I symbol : word) {
-            List<List<Row<I>>> unclosed = table.addAlphabetSymbol(symbol, membershipOracle);
-            completeConsistentTable(unclosed, true);
+            addAlphabetSymbol(symbol);
         }
     }
 

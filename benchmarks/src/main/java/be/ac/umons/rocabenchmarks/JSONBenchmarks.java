@@ -41,6 +41,7 @@ import de.learnlib.filter.statistic.oracle.ROCACounterOracle;
 import de.learnlib.oracle.equivalence.roca.RestrictedAutomatonCounterEQOracle;
 import de.learnlib.util.statistics.SimpleProfiler;
 import net.automatalib.automata.oca.ROCA;
+import net.automatalib.serialization.dot.GraphDOT;
 import net.automatalib.words.GrowingAlphabet;
 import net.automatalib.words.impl.GrowingMapAlphabet;
 import net.jimblackler.jsonschemafriend.GenerationException;
@@ -71,7 +72,8 @@ public class JSONBenchmarks {
             "|Ŝ \\ S|",
             "# of bin rows",
             "Result alphabet size",
-            "Result target size"
+            "Result target size",
+            "DOT"
         );
         // @formatter:on
         this.nColumns = header.size();
@@ -80,9 +82,10 @@ public class JSONBenchmarks {
         csvPrinter.flush();
     }
 
-    public void runBenchmarks(final Random rand, final Schema schema, final SchemaStore schemaStore, final int nTests, final int nRepetitions) throws GenerationException, InterruptedException, IOException {
-        for (int i = 0 ; i < nRepetitions ; i++) {
-            System.out.println((i+1) + "/" + nRepetitions);
+    public void runBenchmarks(final Random rand, final Schema schema, final SchemaStore schemaStore, final int nTests,
+            final int nRepetitions) throws GenerationException, InterruptedException, IOException {
+        for (int i = 0; i < nRepetitions; i++) {
+            System.out.println((i + 1) + "/" + nRepetitions);
             runExperiment(rand, schema, schemaStore, nTests);
         }
     }
@@ -126,7 +129,7 @@ public class JSONBenchmarks {
         });
 
         boolean finished;
-        boolean error = false;
+        Exception error = null;
         Stopwatch watch = Stopwatch.createStarted();
         try {
             handler.get(timeout.toMillis(), TimeUnit.MILLISECONDS);
@@ -136,8 +139,9 @@ public class JSONBenchmarks {
             finished = false;
         } catch (ExecutionException e) {
             handler.cancel(true);
-            error = true;
+            error = e;
             finished = false;
+            e.printStackTrace(System.err);
         }
         watch.stop();
         executor.shutdownNow();
@@ -163,10 +167,15 @@ public class JSONBenchmarks {
             results.add(table.numberOfBinShortPrefixRows());
             results.add(alphabet.size());
             results.add(learntROCA.size());
-        } else if (error) {
-            for (int i = 0; i < nColumns; i++) {
+
+            StringBuilder sb = new StringBuilder();
+            GraphDOT.write(learntROCA, sb);
+            results.add(sb.toString());
+        } else if (error != null) {
+            for (int i = 0; i < nColumns - 1; i++) {
                 results.add("Error");
             }
+            results.add(error.toString());
         } else {
             for (int i = 0; i < nColumns; i++) {
                 results.add("Timeout");

@@ -2,6 +2,8 @@ package be.ac.umons.jsonroca;
 
 import java.util.Objects;
 
+import net.automatalib.words.Word;
+import net.automatalib.words.WordBuilder;
 import net.automatalib.words.abstractimpl.AbstractSymbol;
 
 /**
@@ -42,6 +44,14 @@ public class JSONSymbol extends AbstractSymbol<JSONSymbol> {
 
     public static JSONSymbol toSymbol(Character character) {
         return new JSONSymbol(Character.toString(character));
+    }
+
+    public static Word<JSONSymbol> toWord(String... symbols) {
+        WordBuilder<JSONSymbol> wordBuilder = new WordBuilder<>(symbols.length);
+        for (String symbol : symbols) {
+            wordBuilder.add(toSymbol(symbol));
+        }
+        return wordBuilder.toWord();
     }
 
     @Override

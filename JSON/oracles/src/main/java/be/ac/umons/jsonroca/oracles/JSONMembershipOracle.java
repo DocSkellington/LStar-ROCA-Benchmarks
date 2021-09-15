@@ -22,16 +22,15 @@ public class JSONMembershipOracle implements SingleQueryOracleROCA<JSONSymbol> {
     }
 
     @Override
-    public Boolean answerQuery(Word<JSONSymbol> prefix, Word<JSONSymbol> suffix) {
-        Word<JSONSymbol> word = prefix.concat(suffix);
-        String string = WordConversion.fromJSONSymbolWordToString(word);
+    public Boolean answerQuery(Word<JSONSymbol> input) {
+        String string = WordConversion.fromJSONSymbolWordToString(input);
         if (!Utils.validWord(string)) {
             return false;
         }
+        string = escapeSymbolsForJSON(string);
         JSONObject json;
         try {
-            // We escape the "\A" symbols in the document (to avoid errors from JSONObject)
-            json = new JSONObject(string.replace("\\A", "\\\\A"));
+            json = new JSONObject(string);
         } catch (JSONException e) {
             return false;
         }
@@ -42,5 +41,17 @@ public class JSONMembershipOracle implements SingleQueryOracleROCA<JSONSymbol> {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public Boolean answerQuery(Word<JSONSymbol> prefix, Word<JSONSymbol> suffix) {
+        return answerQuery(prefix.concat(suffix));
+    }
+
+    public static String escapeSymbolsForJSON(String string) {
+        // We escape the "\S", "\I", and "\D" symbols in the document (to avoid errors from JSONObject)
+        // That means we replace every \\([SID]) by \\\\$1. We need to escape each \ in the Java code
+        // We also want to replace only the symbols in the values (not in the keys). So, we add a positive look-ahead check
+        return string.replaceAll("\\\\([SID])((?=[,\\]}\\s])|(?=\"[,}\\]]))", "\\\\\\\\$1");
     }
 }

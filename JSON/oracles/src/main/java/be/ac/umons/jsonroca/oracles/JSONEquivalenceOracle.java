@@ -41,7 +41,7 @@ public class JSONEquivalenceOracle implements EquivalenceOracle.ROCAEquivalenceO
 
     @Override
     public @Nullable DefaultQuery<JSONSymbol, Boolean> findCounterExample(ROCA<?, JSONSymbol> hypo, Collection<? extends JSONSymbol> inputs) {
-        for (int maxTreeSize = 1 ; maxTreeSize <= 10 ; maxTreeSize++) {
+        for (int maxTreeSize = 1 ; maxTreeSize <= 100 ; maxTreeSize++) {
             for (int i = 0 ; i < numberTests ; i++) {
                 boolean correctForSchema;
                 JSONObject document = null;

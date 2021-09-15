@@ -216,61 +216,95 @@ public class Validator {
     boolean exclusiveMaximumBoolean = schema.isExclusiveMaximumBoolean();
     Collection<String> disallow = schema.getDisallow();
 
+    // if (object instanceof Number) {
+    //   Number number = (Number) object;
+    //   if (multipleOf != null && number.doubleValue() / multipleOf.doubleValue() % 1 != 0) {
+    //     error.accept(new MultipleError(uri, document, schema));
+    //   }
+    //   if (maximum != null
+    //       && (exclusiveMaximumBoolean ? number.doubleValue() >= maximum.doubleValue()
+    //                                   : number.doubleValue() > maximum.doubleValue())) {
+    //     error.accept(new MaximumError(uri, document, schema));
+    //   }
+
+    //   if (exclusiveMaximum != null && number.doubleValue() >= exclusiveMaximum.doubleValue()) {
+    //     error.accept(new ExclusiveMaximumError(uri, document, schema));
+    //   }
+    //   if (minimum != null) {
+    //     if (exclusiveMinimumBoolean ? number.doubleValue() <= minimum.doubleValue()
+    //                                 : number.doubleValue() < minimum.doubleValue()) {
+    //       error.accept(new MinimumError(uri, document, schema));
+    //     }
+    //   }
+    //   if (exclusiveMinimum != null && number.doubleValue() <= exclusiveMinimum.doubleValue()) {
+    //     error.accept(new ExclusiveMinimumError(uri, document, schema));
+    //   }
+    //   Set<String> okTypes = new HashSet<>();
+    //   okTypes.add("number");
+    //   try {
+    //     BigDecimal bigDecimal = new BigDecimal(number.toString());
+    //     if (bigDecimal.remainder(BigDecimal.ONE).compareTo(BigDecimal.ZERO) == 0) {
+    //       okTypes.add("integer");
+    //     }
+    //   } catch (NumberFormatException e) {
+    //     // Intentionally silenced.
+    //   }
+
+    //   typeCheck(schema, document, uri, okTypes, disallow, error);
+
+    //   Number divisibleBy = schema.getDivisibleBy();
+    //   if (divisibleBy != null && number.doubleValue() / divisibleBy.doubleValue() % 1 != 0) {
+    //     error.accept(new DivisibleByError(uri, document, schema));
+    //   }
+
     if (object instanceof Number) {
-      Number number = (Number) object;
-      if (multipleOf != null && number.doubleValue() / multipleOf.doubleValue() % 1 != 0) {
-        error.accept(new MultipleError(uri, document, schema));
-      }
-      if (maximum != null
-          && (exclusiveMaximumBoolean ? number.doubleValue() >= maximum.doubleValue()
-                                      : number.doubleValue() > maximum.doubleValue())) {
-        error.accept(new MaximumError(uri, document, schema));
-      }
-
-      if (exclusiveMaximum != null && number.doubleValue() >= exclusiveMaximum.doubleValue()) {
-        error.accept(new ExclusiveMaximumError(uri, document, schema));
-      }
-      if (minimum != null) {
-        if (exclusiveMinimumBoolean ? number.doubleValue() <= minimum.doubleValue()
-                                    : number.doubleValue() < minimum.doubleValue()) {
-          error.accept(new MinimumError(uri, document, schema));
-        }
-      }
-      if (exclusiveMinimum != null && number.doubleValue() <= exclusiveMinimum.doubleValue()) {
-        error.accept(new ExclusiveMinimumError(uri, document, schema));
-      }
-      Set<String> okTypes = new HashSet<>();
-      okTypes.add("number");
-      try {
-        BigDecimal bigDecimal = new BigDecimal(number.toString());
-        if (bigDecimal.remainder(BigDecimal.ONE).compareTo(BigDecimal.ZERO) == 0) {
-          okTypes.add("integer");
-        }
-      } catch (NumberFormatException e) {
-        // Intentionally silenced.
-      }
-
-      typeCheck(schema, document, uri, okTypes, disallow, error);
-
-      Number divisibleBy = schema.getDivisibleBy();
-      if (divisibleBy != null && number.doubleValue() / divisibleBy.doubleValue() % 1 != 0) {
-        error.accept(new DivisibleByError(uri, document, schema));
-      }
-
+      error.accept(new UnexpecedTypeError(uri, document, object, schema));
     } else if (object instanceof String) {
+    //   okTypes.add("number");
+    //   try {
+    //     BigDecimal bigDecimal = new BigDecimal(number.toString());
+    //     if (bigDecimal.remainder(BigDecimal.ONE).compareTo(BigDecimal.ZERO) == 0) {
+    //       okTypes.add("integer");
+    //     }
+    //   } catch (NumberFormatException e) {
+    //     // Intentionally silenced.
+    //   }
+
+    //   typeCheck(schema, document, uri, okTypes, disallow, error);
       String string = (String) object;
-      String format = schema.getFormat();
-      if (format != null) {
-        String message =
-            FormatChecker.formatCheck(string, format, schema.getMetaSchema(), regExPatternSupplier);
-        if (message != null) {
-          error.accept(new FormatError(uri, document, schema, message));
-        }
+
+      if (string.equals("\\I")) {
+        Set<String> okTypes = new HashSet<>();
+        okTypes.add("number");
+        okTypes.add("integer");
+        typeCheck(schema, document, uri, okTypes, disallow, errorConsumer);
       }
-      String stringToValidate = string;
-      if (!stringToValidate.equals("\\A") && !stringToValidate.isEmpty()) {
-        error.accept(new FormatError(uri, document, schema, "All strings should be equal to \\A or be empty"));
+      else if (string.equals("\\D")) {
+        Set<String> okTypes = new HashSet<>();
+        okTypes.add("number");
+        typeCheck(schema, document, uri, okTypes, disallow, errorConsumer);
       }
+      else if (string.equals("\\S")) {
+        Set<String> okTypes = new HashSet<>();
+        okTypes.add("string");
+        typeCheck(schema, document, uri, okTypes, disallow, errorConsumer);
+      }
+      else {
+        error.accept(new FormatError(uri, document, schema, "Invalid data type. It should be \\I for integers, \\D for numbers, or \\S for strings"));
+      }
+
+      // String format = schema.getFormat();
+      // if (format != null) {
+      //   String message =
+      //       FormatChecker.formatCheck(string, format, schema.getMetaSchema(), regExPatternSupplier);
+      //   if (message != null) {
+      //     error.accept(new FormatError(uri, document, schema, message));
+      //   }
+      // }
+      // String stringToValidate = string;
+      // if (!stringToValidate.equals("\\S") && !stringToValidate.isEmpty()) {
+      //   error.accept(new FormatError(uri, document, schema, "All strings should be equal to \\S or be empty"));
+      // }
 
       // int unicodeCompliantLength = string.codePointCount(0, string.length());
       // Number minLength = schema.getMinLength();
