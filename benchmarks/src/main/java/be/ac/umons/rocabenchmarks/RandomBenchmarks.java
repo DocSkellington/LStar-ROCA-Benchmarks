@@ -177,12 +177,12 @@ public class RandomBenchmarks {
             GraphDOT.write(learntROCA, sb);
             results.add(sb.toString());
         } else if (error != null) {
-            for (int i = 2; i <= nColumns - 1; i++) {
+            for (int i = results.size() - 1; i < nColumns; i++) {
                 results.add("Error");
             }
             results.add(error.toString());
         } else {
-            for (int i = 2; i <= nColumns; i++) {
+            for (int i = results.size() - 1; i < nColumns; i++) {
                 results.add("Timeout");
             }
         }
