@@ -3,6 +3,7 @@ package be.ac.umons.rocabenchmarks;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -62,18 +63,23 @@ public class JSONBenchmarks {
             "DFA counterexample time (ms)",
             "Learning ROCA time (ms)",
             "Table time (ms)",
+            "Finding descriptions (ms)",
             "Membership queries",
             "Counter value queries",
             "Partial equivalence queries",
             "Equivalence queries",
             "Rounds",
+            "Openness",
+            "Sigma-inconsistencies",
+            "Bottom-inconsistencies",
+            "Mismatches",
+            "Length longest cex",
             "|R|",
             "|S|",
             "|Ŝ \\ S|",
             "# of bin rows",
             "Result alphabet size",
-            "Result target size",
-            "DOT"
+            "Result target size"
         );
         // @formatter:on
         this.nColumns = header.size();
@@ -86,11 +92,11 @@ public class JSONBenchmarks {
             final int nRepetitions) throws GenerationException, InterruptedException, IOException {
         for (int i = 0; i < nRepetitions; i++) {
             System.out.println((i + 1) + "/" + nRepetitions);
-            runExperiment(rand, schema, schemaStore, nTests);
+            runExperiment(rand, schema, schemaStore, nTests, i);
         }
     }
 
-    private void runExperiment(final Random rand, final Schema schema, final SchemaStore schemaStore, final int nTests)
+    private void runExperiment(final Random rand, final Schema schema, final SchemaStore schemaStore, final int nTests, final int currentId)
             throws GenerationException, InterruptedException, IOException {
         final ExecutorService executor = Executors.newSingleThreadExecutor();
         SimpleProfiler.reset();
@@ -129,7 +135,7 @@ public class JSONBenchmarks {
         });
 
         boolean finished;
-        Exception error = null;
+        boolean error = false;
         Stopwatch watch = Stopwatch.createStarted();
         try {
             handler.get(timeout.toMillis(), TimeUnit.MILLISECONDS);
@@ -139,9 +145,8 @@ public class JSONBenchmarks {
             finished = false;
         } catch (ExecutionException e) {
             handler.cancel(true);
-            error = e;
+            error = true;
             finished = false;
-            e.printStackTrace(System.err);
         }
         watch.stop();
         executor.shutdownNow();
@@ -156,11 +161,17 @@ public class JSONBenchmarks {
             results.add(getProfilerTime(LStarROCA.COUNTEREXAMPLE_DFA_PROFILE_KEY));
             results.add(getProfilerTime(ROCAExperiment.LEARNING_ROCA_PROFILE_KEY));
             results.add(getProfilerTime(LStarROCA.CLOSED_TABLE_PROFILE_KEY));
+            results.add(getProfilerTime(LStarROCA.FINDING_PERIODIC_DESCRIPTIONS));
             results.add(membershipOracle.getStatisticalData().getCount());
             results.add(counterValueOracle.getStatisticalData().getCount());
             results.add(partialEquivalenceOracle.getStatisticalData().getCount());
             results.add(equivalenceOracle.getStatisticalData().getCount());
             results.add(experiment.getRounds().getCount());
+            results.add(lstar_roca.numberOfRowsUsedToCloseTable());
+            results.add(lstar_roca.numberOfSigmaInconsistencies());
+            results.add(lstar_roca.numberOfBottomInconsistencies());
+            results.add(lstar_roca.numberOfResolvedMismatches());
+            results.add(lstar_roca.getLengthOfTheLongestCounterexample());
             results.add(table.numberOfShortPrefixRows());
             results.add(table.numberOfClassicalSuffixes());
             results.add(table.numberOfForLanguageOnlySuffixes());
@@ -168,14 +179,15 @@ public class JSONBenchmarks {
             results.add(alphabet.size());
             results.add(learntROCA.size());
 
-            StringBuilder sb = new StringBuilder();
-            GraphDOT.write(learntROCA, sb);
-            results.add(sb.toString());
-        } else if (error != null) {
+            Path pathToDOTFolder = Paths.get(System.getProperty("user.dir"), "Results", "Random", "Dot");
+            pathToDOTFolder.toFile().mkdirs();
+            Path pathToDotFile = pathToDOTFolder.resolve(String.valueOf(schema.getTitle()) + "-" + String.valueOf(currentId) + ".dot");
+            FileWriter writer = new FileWriter(pathToDotFile.toFile());
+            GraphDOT.write(learntROCA, writer);
+        } else if (error) {
             for (int i = 0; i < nColumns - 1; i++) {
                 results.add("Error");
             }
-            results.add(error.toString());
         } else {
             for (int i = 0; i < nColumns; i++) {
                 results.add("Timeout");
