@@ -34,6 +34,7 @@ public class LStarROCAGrowingAlphabet<I> extends LStarROCA<I> {
 
     @Override
     public boolean refineHypothesis(DefaultQuery<I, Boolean> ceQuery) {
+        lengthLongestCounterexample = Math.max(ceQuery.getInput().length(), lengthLongestCounterexample);
         // 1. We compute the new counter limit
         List<DefaultQuery<I, Integer>> counterValueQueries = new ArrayList<>(ceQuery.getInput().length());
         for (Word<I> prefix : ceQuery.getInput().prefixes(false)) {
@@ -111,6 +112,7 @@ public class LStarROCAGrowingAlphabet<I> extends LStarROCA<I> {
             assert MQUtil.isCounterexample(ce, hypothesis);
             LOGGER.logCounterexample(ce.getInput().toString());
             addNewSymbolsFromWord(ce.getInput());
+            lengthLongestCounterexample = Math.max(ce.getInput().length(), lengthLongestCounterexample);
 
             int oldDistinctRows = table.numberOfDistinctRows();
             int oldSuffixes = table.numberOfSuffixes();
