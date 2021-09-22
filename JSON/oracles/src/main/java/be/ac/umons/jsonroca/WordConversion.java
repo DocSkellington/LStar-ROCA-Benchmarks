@@ -2,6 +2,14 @@ package be.ac.umons.jsonroca;
 
 import static be.ac.umons.jsonroca.JSONSymbol.toSymbol;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import net.automatalib.words.Word;
 import net.automatalib.words.WordBuilder;
 
@@ -12,6 +20,81 @@ import net.automatalib.words.WordBuilder;
  * @author Gaëtan Staquet
  */
 public class WordConversion {
+    public static Word<JSONSymbol> fromJSONDocumentToJSONSymbolWord(JSONObject document, boolean shuffleKeys, Random rand) {
+        WordBuilder<JSONSymbol> wordBuilder = new WordBuilder<>();
+        wordBuilder.add(toSymbol("{"));
+        fromJSONObjectToJSONWord(document, rand, wordBuilder);
+        wordBuilder.add(toSymbol("}"));
+        return wordBuilder.toWord();
+    }
+
+    public static Word<JSONSymbol> fromJSONDocumentToJSONSymbolWord(JSONObject document, boolean shuffleKeys) {
+        return fromJSONDocumentToJSONSymbolWord(document, shuffleKeys, new Random());
+    }
+
+    public static Word<JSONSymbol> fromJSONDocumentToJSONSymbolWord(JSONObject document) {
+        return fromJSONDocumentToJSONSymbolWord(document, true);
+    }
+
+    private static void fromJSONObjectToJSONWord(JSONObject object, Random rand, WordBuilder<JSONSymbol> wordBuilder) {
+        List<String> keys = new ArrayList<>(object.keySet());
+        Collections.shuffle(keys, rand);
+        boolean first =  true;
+        for (String key : keys) {
+            if (!first) {
+                wordBuilder.add(toSymbol(","));
+            }
+            first = false;
+            wordBuilder.add(toSymbol("\"" + key + "\""));
+
+            Object o = object.get(key);
+            if (o instanceof JSONObject) {
+                wordBuilder.add(toSymbol(":{"));
+                fromJSONObjectToJSONWord((JSONObject) o, rand, wordBuilder);
+                wordBuilder.add(toSymbol("}"));
+            }
+            else if (o instanceof JSONArray) {
+                wordBuilder.add(toSymbol(":["));
+                fromJSONArrayToJSONWord((JSONArray) o, rand, wordBuilder);
+                wordBuilder.add(toSymbol("]"));
+            }
+            else if (o instanceof Boolean) {
+                wordBuilder.add(toSymbol(":"));
+                wordBuilder.add(toSymbol(o.toString()));
+            }
+            else {
+                wordBuilder.add(toSymbol(":"));
+                wordBuilder.add(toSymbol("\"" + o.toString() + "\""));
+            }
+        }
+    }
+
+    private static void fromJSONArrayToJSONWord(JSONArray array, Random rand, WordBuilder<JSONSymbol> wordBuilder) {
+        boolean first = true;
+        for (Object o : array) {
+            if (!first) {
+                wordBuilder.add(toSymbol(","));
+            }
+            first = false;
+            if (o instanceof JSONObject) {
+                wordBuilder.add(toSymbol("{"));
+                fromJSONObjectToJSONWord((JSONObject) o, rand, wordBuilder);
+                wordBuilder.add(toSymbol("}"));
+            }
+            else if (o instanceof JSONArray) {
+                wordBuilder.add(toSymbol("["));
+                fromJSONArrayToJSONWord((JSONArray) o, rand, wordBuilder);
+                wordBuilder.add(toSymbol("]"));
+            }
+            else if (o instanceof Boolean) {
+                wordBuilder.add(toSymbol(o.toString()));
+            }
+            else {
+                wordBuilder.add(toSymbol("\"" + o.toString() + "\""));
+            }
+        }
+    }
+
     public static Word<JSONSymbol> fromStringToJSONSymbolWord(String string) {
         WordBuilder<JSONSymbol> wordBuilder = new WordBuilder<>();
         boolean inString = false;

@@ -27,16 +27,20 @@ public class JSONEquivalenceOracle implements EquivalenceOracle.ROCAEquivalenceO
     private final Schema schema;
     private final Validator validator;
     private final int numberTests;
+    private final boolean shuffleKeys;
+    private final Random rand;
 
-    public JSONEquivalenceOracle(int numberTests, Schema schema, Configuration configuration, SchemaStore schemaStore, Random random) throws GenerationException {
+    public JSONEquivalenceOracle(int numberTests, Schema schema, Configuration configuration, SchemaStore schemaStore, Random random, boolean shuffleKeys) throws GenerationException {
         this.numberTests = numberTests;
         this.schema = schema;
         this.generator = new Generator(configuration, schemaStore, random);
         this.validator = new Validator();
+        this.shuffleKeys = shuffleKeys;
+        this.rand = random;
     }
 
-    public JSONEquivalenceOracle(int numberTests, Schema schema, SchemaStore schemaStore, Random random) throws GenerationException {
-        this(numberTests, schema, new DefaultGeneratorConfiguration(), schemaStore, random);
+    public JSONEquivalenceOracle(int numberTests, Schema schema, SchemaStore schemaStore, Random random, boolean shuffleKeys) throws GenerationException {
+        this(numberTests, schema, new DefaultGeneratorConfiguration(), schemaStore, random, shuffleKeys);
     }
 
     @Override
@@ -56,7 +60,7 @@ public class JSONEquivalenceOracle implements EquivalenceOracle.ROCAEquivalenceO
                     correctForSchema = false;
                 }
 
-                Word<JSONSymbol> word = WordConversion.fromStringToJSONSymbolWord(document.toString());
+                Word<JSONSymbol> word = WordConversion.fromJSONDocumentToJSONSymbolWord(document, shuffleKeys, rand);
                 boolean correctForHypo = hypo.accepts(word);
 
                 if (correctForSchema != correctForHypo) {

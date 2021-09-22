@@ -54,10 +54,14 @@ public class Benchmarks {
             final String schemaName = filePath.getFileName().toString();
             int nTests = 1000;
             int nRepetitions = 1000;
+            boolean shuffleKeys = true;
             if (args.length >= 4) {
                 nTests = Integer.valueOf(args[3]);
                 if (args.length >= 5) {
                     nRepetitions = Integer.valueOf(args[4]);
+                    if (args.length >= 6) {
+                        shuffleKeys = Boolean.valueOf(args[5]);
+                    }
                 }
             }
 
@@ -80,7 +84,7 @@ public class Benchmarks {
             pathToCSVFolder.toFile().mkdirs();
             Path pathToCSVFile = pathToCSVFolder.resolve("" + timeLimit + "s-" + schemaName + "-" + nTests + "-" + nRepetitions + "-" + dtf.format(now) + ".csv");
             JSONBenchmarks jsonBenchmarks = new JSONBenchmarks(pathToCSVFile, timeout);
-            jsonBenchmarks.runBenchmarks(rand, schema, schemaStore, nTests, nRepetitions);
+            jsonBenchmarks.runBenchmarks(rand, schema, schemaStore, nTests, nRepetitions, shuffleKeys);
         }
     }
 }

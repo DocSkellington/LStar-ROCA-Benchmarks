@@ -89,14 +89,14 @@ public class JSONBenchmarks {
     }
 
     public void runBenchmarks(final Random rand, final Schema schema, final SchemaStore schemaStore, final int nTests,
-            final int nRepetitions) throws GenerationException, InterruptedException, IOException {
+            final int nRepetitions, final boolean shuffleKeys) throws GenerationException, InterruptedException, IOException {
         for (int i = 0; i < nRepetitions; i++) {
             System.out.println((i + 1) + "/" + nRepetitions);
-            runExperiment(rand, schema, schemaStore, nTests, i);
+            runExperiment(rand, schema, schemaStore, nTests, shuffleKeys, i);
         }
     }
 
-    private void runExperiment(final Random rand, final Schema schema, final SchemaStore schemaStore, final int nTests, final int currentId)
+    private void runExperiment(final Random rand, final Schema schema, final SchemaStore schemaStore, final int nTests, final boolean shuffleKeys, final int currentId)
             throws GenerationException, InterruptedException, IOException {
         final ExecutorService executor = Executors.newSingleThreadExecutor();
         SimpleProfiler.reset();
@@ -112,12 +112,12 @@ public class JSONBenchmarks {
                 "counter value queries");
 
         EquivalenceOracle.RestrictedAutomatonEquivalenceOracle<JSONSymbol> partialEqOracle = new JSONPartialEquivalenceOracle(
-                nTests, schema, schemaStore, rand);
+                nTests, schema, schemaStore, rand, shuffleKeys);
         RestrictedAutomatonCounterEQOracle<JSONSymbol> partialEquivalenceOracle = new RestrictedAutomatonCounterEQOracle<>(
                 partialEqOracle, "partial equivalence queries");
 
         EquivalenceOracle.ROCAEquivalenceOracle<JSONSymbol> eqOracle = new JSONEquivalenceOracle(nTests, schema,
-                schemaStore, rand);
+                schemaStore, rand, shuffleKeys);
         ROCACounterEQOracle<JSONSymbol> equivalenceOracle = new ROCACounterEQOracle<>(eqOracle, "equivalence queries");
 
         LStarROCAGrowingAlphabet<JSONSymbol> lstar_roca = new LStarROCAGrowingAlphabet<>(membershipOracle,

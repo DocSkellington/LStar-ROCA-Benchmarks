@@ -2,12 +2,19 @@ package be.ac.umons.jsonroca;
 
 import static be.ac.umons.jsonroca.JSONSymbol.toSymbol;
 
+import java.util.Arrays;
+
+import org.json.JSONObject;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import net.automatalib.words.Word;
 
 public class WordConversionTests {
+    private static void assertEqualsOr(Object actual, Object... expected) {
+        Assert.assertTrue(Arrays.asList(expected).contains(actual));
+    }
+
     @Test
     public void fromStringToSymbols() {
         String base = "hello";
@@ -15,39 +22,45 @@ public class WordConversionTests {
         Word<JSONSymbol> target = Word.fromSymbols(toSymbol("hello"));
         Assert.assertEquals(result, target);
 
-        base = "\"pro\":{\"i\":1},\"other\":\"\\\\D\"";
-        result = WordConversion.fromStringToJSONSymbolWord(base);
-        target = JSONSymbol.toWord("\"pro\"", ":{", "\"i\"", ":", "1", "}", ",", "\"other\"", ":", "\"\\D\"");
-        Assert.assertEquals(result, target);
+        base = "{\"pro\":{\"i\":\"\\\\I\"},\"other\":\"\\\\D\"}";
+        result = WordConversion.fromJSONDocumentToJSONSymbolWord(new JSONObject(base));
+        Word<JSONSymbol> target1 = target = JSONSymbol.toWord("{", "\"pro\"", ":{", "\"i\"", ":", "\"\\I\"", "}", ",", "\"other\"", ":", "\"\\D\"", "}");
+        Word<JSONSymbol> target2 = target = JSONSymbol.toWord("{", "\"other\"", ":", "\"\\D\"", ",", "\"pro\"", ":{", "\"i\"", ":", "\"\\I\"", "}", "}");
+        assertEqualsOr(result, target1, target2);
         
         // We ignore some spaces
-        base = " \"pro\" : { \"i\" : 1 } , \"other\" : \"\\\\D\" ";
-        result = WordConversion.fromStringToJSONSymbolWord(base);
-        target = JSONSymbol.toWord("\"pro\"", ":{", "\"i\"", ":", "1", "}", ",", "\"other\"", ":", "\"\\D\"");
-        Assert.assertEquals(result, target);
+        base = "{ \"pro\" : { \"i\" : \"\\\\I\" } , \"other\" : \"\\\\D\" }";
+        result = WordConversion.fromJSONDocumentToJSONSymbolWord(new JSONObject(base));
+        assertEqualsOr(result, target1, target2);
 
         // Arrays and booleans
-        base = "\"arrays\": [1, 2, 3], \"boolean\": false, \"other\": true";
+        base = "{\"arrays\": [\"\\\\I\", \"\\\\I\", \"\\\\I\"], \"boolean\": false, \"other\": true}";
         result = WordConversion.fromStringToJSONSymbolWord(base);
-        target = JSONSymbol.toWord("\"arrays\"", ":[", "1", ",", "2", ",", "3", "]", ",", "\"boolean\"", ":", "false", ",", "\"other\"", ":", "true");
-        Assert.assertEquals(result, target);
+        target1 = JSONSymbol.toWord("{", "\"arrays\"", ":[", "\"\\I\"", ",", "\"\\I\"", ",", "\"\\I\"", "]", ",", "\"boolean\"", ":", "false", ",", "\"other\"", ":", "true", "}");
+        target2 = JSONSymbol.toWord("{", "\"arrays\"", ":[", "\"\\I\"", ",", "\"\\I\"", ",", "\"\\I\"", "]", ",", "\"other\"", ":", "true", ",", "\"boolean\"", ":", "false", "}");
+        Word<JSONSymbol> target3 = JSONSymbol.toWord("{", "\"boolean\"", ":", "false", ",", "\"arrays\"", ":[", "\"\\I\"", ",", "\"\\I\"", ",", "\"\\I\"", "]", ",", "\"other\"", ":", "true", "}");
+        Word<JSONSymbol> target4 = JSONSymbol.toWord("{", "\"other\"", ":", "true", ",", "\"arrays\"", ":[", "\"\\I\"", ",", "\"\\I\"", ",", "\"\\I\"", "]", ",", "\"boolean\"", ":", "false", "}");
+        Word<JSONSymbol> target5 = JSONSymbol.toWord("{", "\"boolean\"", ":", "false", ",", "\"other\"", ":", "true", ",", "\"arrays\"", ":[", "\"\\I\"", ",", "\"\\I\"", ",", "\"\\I\"", "]", "}");
+        Word<JSONSymbol> target6 = JSONSymbol.toWord("{", "\"other\"", ":", "true", ",", "\"boolean\"", ":", "false", ",", "\"arrays\"", ":[", "\"\\I\"", ",", "\"\\I\"", ",", "\"\\I\"", "]", "}");
+        assertEqualsOr(result, target1, target2, target3, target4, target5, target6);
 
         // Empty array
-        base = "\"array\": [], \"other\": false";
-        result = WordConversion.fromStringToJSONSymbolWord(base);
-        target = JSONSymbol.toWord("\"array\"", ":[", "]", ",", "\"other\"", ":", "false");
-        Assert.assertEquals(result, target);
+        base = "{\"array\": [], \"other\": false}";
+        result = WordConversion.fromJSONDocumentToJSONSymbolWord(new JSONObject(base));
+        target1 = JSONSymbol.toWord("{", "\"array\"", ":[", "]", ",", "\"other\"", ":", "false", "}");
+        target2 = JSONSymbol.toWord("{", "\"other\"", ":", "false", ",", "\"array\"", ":[", "]", "}");
+        assertEqualsOr(result, target1, target2);
 
         // Empty object
-        base = "\"obj\": {}";
-        result = WordConversion.fromStringToJSONSymbolWord(base);
-        target = JSONSymbol.toWord("\"obj\"", ":{", "}");
+        base = "{\"obj\": {}}";
+        result = WordConversion.fromJSONDocumentToJSONSymbolWord(new JSONObject(base));
+        target = JSONSymbol.toWord("{", "\"obj\"", ":{", "}", "}");
         Assert.assertEquals(result, target);
 
         // Closing two objects in a row
-        base = "\"obj\": {\"obj\": {}}";
+        base = "{\"obj\": {\"obj\": {}}}";
         result = WordConversion.fromStringToJSONSymbolWord(base);
-        target = JSONSymbol.toWord("\"obj\"", ":{", "\"obj\"", ":{", "}", "}");
+        target = JSONSymbol.toWord("{", "\"obj\"", ":{", "\"obj\"", ":{", "}", "}", "}");
         Assert.assertEquals(result, target);
     }
 
