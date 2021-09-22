@@ -14,7 +14,6 @@ public class RandomROCA<I> {
         this.alphabet = alphabet;
         ROCA<?, I> potentialROCA = RandomAutomata.randomROCA(rand, size, acceptanceProbability, alphabet);
         while (potentialROCA.numberOfReachableLocations() != size && nTries-- != 0) {
-            System.out.println(nTries);
             ROCA<?, I> r = RandomAutomata.randomROCA(rand, size, acceptanceProbability, alphabet);
             if (r.numberOfReachableLocations() > potentialROCA.numberOfReachableLocations()) {
                 potentialROCA = r;

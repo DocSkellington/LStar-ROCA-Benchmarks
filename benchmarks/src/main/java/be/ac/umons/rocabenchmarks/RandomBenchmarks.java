@@ -190,11 +190,11 @@ public class RandomBenchmarks {
             FileWriter writer = new FileWriter(pathToDotFile.toFile());
             GraphDOT.write(learntROCA, writer);
         } else if (error) {
-            for (int i = results.size() - 1; i < nColumns; i++) {
+            for (int i = results.size(); i < nColumns; i++) {
                 results.add("Error");
             }
         } else {
-            for (int i = results.size() - 1; i < nColumns; i++) {
+            for (int i = results.size(); i < nColumns; i++) {
                 results.add("Timeout");
             }
         }

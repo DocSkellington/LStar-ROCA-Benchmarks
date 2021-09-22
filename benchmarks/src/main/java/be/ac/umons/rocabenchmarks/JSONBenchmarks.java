@@ -185,11 +185,11 @@ public class JSONBenchmarks {
             FileWriter writer = new FileWriter(pathToDotFile.toFile());
             GraphDOT.write(learntROCA, writer);
         } else if (error) {
-            for (int i = 0; i < nColumns - 1; i++) {
+            for (int i = results.size(); i < nColumns; i++) {
                 results.add("Error");
             }
         } else {
-            for (int i = 0; i < nColumns; i++) {
+            for (int i = results.size(); i < nColumns; i++) {
                 results.add("Timeout");
             }
         }
