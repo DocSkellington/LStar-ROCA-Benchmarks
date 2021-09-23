@@ -126,9 +126,7 @@ public class LStarROCAGrowingAlphabet<I> extends LStarROCA<I> {
             List<Word<I>> suffixes = ce.getInput().suffixes(false);
             List<List<Row<I>>> unclosed = table.addSuffixes(suffixes, membershipOracle);
 
-            SimpleProfiler.start(CLOSED_TABLE_PROFILE_KEY);
             completeConsistentTable(unclosed, true);
-            SimpleProfiler.stop(CLOSED_TABLE_PROFILE_KEY);
 
             assert table.numberOfDistinctRows() > oldDistinctRows || table.numberOfSuffixes() > oldSuffixes
                     : "Nothing was learnt during the last iteration for DFA";
