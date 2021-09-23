@@ -75,7 +75,7 @@ public class RandomBenchmarks {
             "|S|",
             "|Ŝ \\ S|",
             "# of bin rows",
-            "Result target size"
+            "Result ROCA size"
         );
         // @formatter:on
         this.nColumns = header.size();

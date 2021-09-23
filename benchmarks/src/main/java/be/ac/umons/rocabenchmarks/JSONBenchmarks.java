@@ -79,7 +79,7 @@ public class JSONBenchmarks {
             "|Ŝ \\ S|",
             "# of bin rows",
             "Result alphabet size",
-            "Result target size"
+            "Result ROCA size"
         );
         // @formatter:on
         this.nColumns = header.size();
