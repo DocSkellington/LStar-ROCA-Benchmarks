@@ -30,6 +30,7 @@ def write_table(filepath: str, df: pandas.DataFrame):
 
 
 filepath = sys.argv[1]
+timelimit_in_s = int(sys.argv[2])
 df = pandas.read_csv(filepath)
 
 # Grouping by input values
@@ -65,6 +66,34 @@ timeouts_and_errors = pandas.DataFrame({
 
 write_table("statistics/timeouts_errors.tex", timeouts_and_errors)
 
+# Number of queries, sizes of counterexample, of sets, and of learnt ROCA
+columns = [
+    "Membership queries",
+    "Counter value queries",
+    "Partial equivalence queries",
+    "Equivalence queries",
+    "Rounds",
+    "Openness",
+    "Sigma-inconsistencies",
+    "Bottom-inconsistencies",
+    "Mismatches",
+    "Length longest cex",
+    "|R|",
+    "|S|",
+    "|? \\ S|",
+    "# of bin rows",
+    "Result target size"
+]
+numbers = df[["Target ROCA size", "Alphabet size"] + columns]
+numbers = numbers.drop(numbers[numbers[columns[0]] == "Timeout"].index)
+numbers = numbers.drop(numbers[numbers[columns[0]] == "Error"].index)
+for column in columns:
+    numbers[column] = pandas.to_numeric(numbers[column])
+
+numbers_grouped = numbers.groupby(by=["Target ROCA size", "Alphabet size"])
+numbers_means = numbers_grouped.mean()
+numbers_medians = numbers_grouped.median()
+
 # Time columns
 columns = [
     "Total time (ms)",
@@ -75,7 +104,7 @@ columns = [
     "Finding descriptions (ms)"
 ]
 time = df[["Target ROCA size", "Alphabet size"] + columns]
-time = time.replace(to_replace="Timeout", value=60*10)
+time = time.replace(to_replace="Timeout", value=timelimit_in_s * 1000) # * 1000 because we store milliseconds
 time = time.drop(time[time[columns[0]] == "Error"].index)
 for column in columns:
     time[column] = pandas.to_numeric(time[column])
@@ -93,7 +122,7 @@ Z_all = []
 Z_all.append(("Timeouts", griddata((original_X, original_Y), timeouts_and_errors["Timeouts"], (X, Y), method="cubic")))
 Z_all.append(("Errors", griddata((original_X, original_Y), timeouts_and_errors["Errors"], (X, Y), method="cubic")))
 
-# For time
+# For numbers and time
 for newName, column in [
     ("TotalTime", "Total time (ms)"),
     ("ROCACex", "ROCA counterexample time (ms)"),
@@ -101,9 +130,26 @@ for newName, column in [
     ("LearningROCA", "Learning ROCA time (ms)"),
     ("Table", "Table time (ms)"),
     ("Descriptions", "Finding descriptions (ms)"),
+    ("MQ", "Membership queries"),
+    ("CVQ", "Counter value queries"),
+    ("PEQ", "Partial equivalence queries"),
+    ("EQ", "Equivalence queries"),
+    ("Rounds", "Rounds"),
+    ("Openness", "Openness"),
+    ("Sigma", "Sigma-inconsistencies"),
+    ("Bot", "Bottom-inconsistencies"),
+    ("Mismatches", "Mismatches"),
+    ("LengthCex", "Length longest cex"),
+    ("R", "|R|"),
+    ("S", "|S|"),
+    ("HatS", "|? \\ S|"),
+    ("Bin", "# of bin rows"),
+    ("Target", "Result target size")
 ]:
-    Z_mean = griddata((original_X, original_Y), time_means[column], (X, Y), method="cubic")
-    Z_median = griddata((original_X, original_Y), time_medians[column], (X, Y), method="cubic")
+    dataframe_means = time_means if "(ms)" in column else numbers_means
+    Z_mean = griddata((original_X, original_Y), dataframe_means[column], (X, Y), method="cubic")
+    dataframe_medians = time_medians if "(ms)" in column else numbers_medians
+    Z_median = griddata((original_X, original_Y), dataframe_medians[column], (X, Y), method="cubic")
     Z_all.append((newName + "Mean", Z_mean))
     Z_all.append((newName + "Median", Z_median))
 
