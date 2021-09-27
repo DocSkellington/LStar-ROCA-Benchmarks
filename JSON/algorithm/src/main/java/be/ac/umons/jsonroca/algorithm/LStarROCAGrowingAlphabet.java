@@ -1,3 +1,18 @@
+/*
+Copyright 2021 University of Mons and University of Antwerp
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
 package be.ac.umons.jsonroca.algorithm;
 
 import java.util.ArrayList;
@@ -16,7 +31,13 @@ import net.automatalib.words.GrowingAlphabet;
 import net.automatalib.words.Word;
 import net.automatalib.words.impl.Alphabets;
 
-public class LStarROCAGrowingAlphabet<I> extends LStarROCA<I> {
+/**
+ * A version of L* for ROCAs that extends alphabet with new symbols from the
+ * counterexamples.
+ * 
+ * @author Gaëtan Staquet
+ */
+public final class LStarROCAGrowingAlphabet<I> extends LStarROCA<I> {
     private static final LearnLogger LOGGER = LearnLogger.getLogger(LStarROCAGrowingAlphabet.class);
 
     public LStarROCAGrowingAlphabet(MembershipOracle.ROCAMembershipOracle<I> membershipOracle,
@@ -102,9 +123,9 @@ public class LStarROCAGrowingAlphabet<I> extends LStarROCA<I> {
             }
             updateHypothesis();
 
-            SimpleProfiler.start(COUNTEREXAMPLE_DFA_PROFILE_KEY);;
+            SimpleProfiler.start(COUNTEREXAMPLE_DFA_PROFILE_KEY);
             DefaultQuery<I, Boolean> ce = restrictedAutomatonEquivalenceOracle.findCounterExample(hypothesis, alphabet);
-            SimpleProfiler.stop(COUNTEREXAMPLE_DFA_PROFILE_KEY);;
+            SimpleProfiler.stop(COUNTEREXAMPLE_DFA_PROFILE_KEY);
 
             if (ce == null) {
                 return;

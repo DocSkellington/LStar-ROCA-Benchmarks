@@ -1,4 +1,24 @@
 #!/bin/env python3
+"""
+Copyright 2021 University of Mons and University of Antwerp
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+"""
+
+"""
+This file reads a CSV file produced by a random benchmarks run and extract statistics.
+These statistics are written in a format that can be used by pgfplots to create 3D surface plots in LaTeX.
+"""
 
 import sys
 from collections import defaultdict
@@ -6,8 +26,6 @@ from collections import defaultdict
 import pandas
 import numpy as np
 from scipy.interpolate import griddata
-import matplotlib.pyplot as plt
-from matplotlib import cm
 
 def write_surface_data(filepath: str, data_to_write):
     with open(filepath, "w") as f:

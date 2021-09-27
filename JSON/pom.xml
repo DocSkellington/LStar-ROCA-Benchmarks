@@ -12,7 +12,14 @@
 
     <name>Learning JSON Schema</name>
     <description>L*-based learning algorithm for JSON documents</description>
-    <!-- TODO Add license information -->
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+            <comments>A business-friendly OSS license</comments>
+        </license>
+    </licenses>
 
     <developers>
         <developer>

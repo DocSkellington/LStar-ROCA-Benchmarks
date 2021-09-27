@@ -1,0 +1,854 @@
+\documentclass{article}
+
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{booktabs}
+
+\pgfplotsset{
+    compat=newest,
+    colormap={Blues}{rgb=(1, 1, 1) rgb=(0, 0, 1)}, % chktex 36
+    colormap={Reds}{rgb=(1, 1, 1) rgb=(1, 0, 0)}, % chktex 36
+    legend pos=outer north east,
+    every axis/.append style = {
+        grid=both,
+        clip=false,
+        xtick={1, ..., 4}, % chktex 26 11
+        ytick={1, ..., 5}, % chktex 26 11
+        view/h=40,
+    },
+    scaled ticks = false
+}
+
+\begin{document}
+\section{Experiments}
+\begin{itemize}
+    \item 16GB of RAM.
+    \item Maximum 2 minutes.
+    \item See paper for CPU specifications.
+\end{itemize}
+
+\section{Timeouts and errors}
+    \begin{tikzpicture}
+        \begin{axis}[
+            zlabel = Number,
+            reverse legend = true,
+        ]
+            \addplot3 [
+                surf,
+                colormap name = Reds,
+            ]
+                table [
+                    x=X,
+                    y=Y,
+                    z=Errors
+                ]
+                {../statistics/surface_points.dat}
+            ;
+            \addplot3 [
+                surf,
+                colormap name = Blues,
+            ]
+                table [
+                    x=X,
+                    y=Y,
+                    z=Timeouts
+                ]
+                {../statistics/surface_points.dat}
+            ;
+
+            \node at (rel axis cs:0.5,-0.3,0) [below, sloped like x axis] {Target ROCA size};
+            \node at (rel axis cs:1,0.6,-0.3) [below, sloped like y axis] {Alphabet size};
+
+            \legend{Errors, Timeouts}
+        \end{axis}
+    \end{tikzpicture}
+
+    \input{../statistics/timeouts_errors.tex}
+
+\section{Times}
+If a timeout is reached, the value is replaced by \emph{two minutes} (i.e., the time limit).
+\subsection{Total time}
+Time from start to finish.
+
+    \begin{tikzpicture}
+        \begin{axis}[
+            zlabel = Time (s),
+            reverse legend = true,
+        ]
+            \addplot3 [
+                surf,
+                colormap name = Reds,
+            ]
+                table [
+                    x=X,
+                    y=Y,
+                    z=TotalTimeMedian
+                ]
+                {../statistics/surface_points.dat}
+            ;
+            \addplot3 [
+                surf,
+                colormap name = Blues,
+            ]
+                table [
+                    x=X,
+                    y=Y,
+                    z=TotalTimeMean
+                ]
+                {../statistics/surface_points.dat}
+            ;
+
+            \node at (rel axis cs:0.5,-0.3,0) [below, sloped like x axis] {Target ROCA size};
+            \node at (rel axis cs:1,0.6,-0.3) [below, sloped like y axis] {Alphabet size};
+
+            \legend{Median, Mean}
+        \end{axis}
+    \end{tikzpicture}
+
+\subsection{Counterexample time}
+Time to \emph{find} a counterexample, i.e., time taken by the equivalence oracles.
+
+\subsubsection{ROCA}
+    \begin{tikzpicture}
+        \begin{axis}[
+            zlabel = Time (s),
+            reverse legend = true,
+        ]
+            \addplot3 [
+                surf,
+                colormap name = Reds,
+            ]
+                table [
+                    x=X,
+                    y=Y,
+                    z=ROCACexMedian,
+                ]
+                {../statistics/surface_points.dat}
+            ;
+            \addplot3 [
+                surf,
+                colormap name = Blues,
+            ]
+                table [
+                    x=X,
+                    y=Y,
+                    z=ROCACexMean,
+                ]
+                {../statistics/surface_points.dat}
+            ;
+
+            \node at (rel axis cs:0.5,-0.3,0) [below, sloped like x axis] {Target ROCA size};
+            \node at (rel axis cs:1,0.6,-0.3) [below, sloped like y axis] {Alphabet size};
+
+            \legend{Median, Mean}
+        \end{axis}
+    \end{tikzpicture}
+
+\subsubsection{DFA}
+    \begin{tikzpicture}
+        \begin{axis}[
+            zlabel = Time (s),
+            reverse legend = true,
+        ]
+            \addplot3 [
+                surf,
+                colormap name = Reds,
+            ]
+                table [
+                    x=X,
+                    y=Y,
+                    z=DFACexMedian,
+                ]
+                {../statistics/surface_points.dat}
+            ;
+            \addplot3 [
+                surf,
+                colormap name = Blues,
+            ]
+                table [
+                    x=X,
+                    y=Y,
+                    z=DFACexMean,
+                ]
+                {../statistics/surface_points.dat}
+            ;
+
+            \node at (rel axis cs:0.5,-0.3,0) [below, sloped like x axis] {Target ROCA size};
+            \node at (rel axis cs:1,0.6,-0.3) [below, sloped like y axis] {Alphabet size};
+
+            \legend{Median, Mean}
+        \end{axis}
+    \end{tikzpicture}
+
+\subsection{Learning a DFA for a fixed counter limit}
+Time to refine the table using an equivalence query's counterexample.
+Note that it includes the time needed to make the table closed, \(\Sigma\)-, and \(\bot\)-consistent.
+
+    \begin{tikzpicture}
+        \begin{axis}[
+            zlabel = Time (s),
+            reverse legend = true,
+        ]
+            \addplot3 [
+                surf,
+                colormap name = Reds,
+            ]
+                table [
+                    x=X,
+                    y=Y,
+                    z=LearningROCAMedian,
+                ]
+                {../statistics/surface_points.dat}
+            ;
+            \addplot3 [
+                surf,
+                colormap name = Blues,
+            ]
+                table [
+                    x=X,
+                    y=Y,
+                    z=LearningROCAMean,
+                ]
+                {../statistics/surface_points.dat}
+            ;
+
+            \node at (rel axis cs:0.5,-0.3,0) [below, sloped like x axis] {Target ROCA size};
+            \node at (rel axis cs:1,0.6,-0.3) [below, sloped like y axis] {Alphabet size};
+
+            \legend{Median, Mean}
+        \end{axis}
+    \end{tikzpicture}
+
+\subsection{Making table closed, \(\Sigma\)-, and \(\bot\)-consistent}
+UNUSABLE FOR NOW.
+DATA INCORRECT!
+The code is already corrected.
+New benchmarks are running.
+
+    \begin{tikzpicture}
+        \begin{axis}[
+            zlabel = Time (s),
+            reverse legend = true,
+        ]
+            \addplot3 [
+                surf,
+                colormap name = Reds,
+            ]
+                table [
+                    x=X,
+                    y=Y,
+                    z=TableMedian,
+                ]
+                {../statistics/surface_points.dat}
+            ;
+            \addplot3 [
+                surf,
+                colormap name = Blues,
+            ]
+                table [
+                    x=X,
+                    y=Y,
+                    z=TableMean,
+                ]
+                {../statistics/surface_points.dat}
+            ;
+
+            \node at (rel axis cs:0.5,-0.3,0) [below, sloped like x axis] {Target ROCA size};
+            \node at (rel axis cs:1,0.6,-0.3) [below, sloped like y axis] {Alphabet size};
+
+            \legend{Median, Mean}
+        \end{axis}
+    \end{tikzpicture}
+
+\subsection{Computing periodic descriptions}
+Time to find the periodic descriptions AND to construct the corresponding ROCAs.
+
+    \begin{tikzpicture}
+        \begin{axis}[
+            zlabel = Time (s),
+            reverse legend = true,
+        ]
+            \addplot3 [
+                surf,
+                colormap name = Reds,
+            ]
+                table [
+                    x=X,
+                    y=Y,
+                    z=DescriptionsMedian,
+                ]
+                {../statistics/surface_points.dat}
+            ;
+            \addplot3 [
+                surf,
+                colormap name = Blues,
+            ]
+                table [
+                    x=X,
+                    y=Y,
+                    z=DescriptionsMean,
+                ]
+                {../statistics/surface_points.dat}
+            ;
+
+            \node at (rel axis cs:0.5,-0.3,0) [below, sloped like x axis] {Target ROCA size};
+            \node at (rel axis cs:1,0.6,-0.3) [below, sloped like y axis] {Alphabet size};
+
+            \legend{Median, Mean}
+        \end{axis}
+    \end{tikzpicture}
+
+\section{Number of queries}
+\subsection{Membership queries}
+    \begin{tikzpicture}
+        \begin{axis}[
+            zlabel = Number of queries,
+            reverse legend = true,
+        ]
+            \addplot3 [
+                surf,
+                colormap name = Reds,
+            ]
+                table [
+                    x=X,
+                    y=Y,
+                    z=MQMedian,
+                ]
+                {../statistics/surface_points.dat}
+            ;
+            \addplot3 [
+                surf,
+                colormap name = Blues,
+            ]
+                table [
+                    x=X,
+                    y=Y,
+                    z=MQMean,
+                ]
+                {../statistics/surface_points.dat}
+            ;
+
+            \node at (rel axis cs:0.5,-0.3,0) [below, sloped like x axis] {Target ROCA size};
+            \node at (rel axis cs:1,0.6,-0.3) [below, sloped like y axis] {Alphabet size};
+
+            \legend{Median, Mean}
+        \end{axis}
+    \end{tikzpicture}
+
+\subsection{Counter value queries}
+
+    \begin{tikzpicture}
+        \begin{axis}[
+            zlabel = Number of queries,
+            reverse legend = true,
+        ]
+            \addplot3 [
+                surf,
+                colormap name = Reds,
+            ]
+                table [
+                    x=X,
+                    y=Y,
+                    z=CVQMedian,
+                ]
+                {../statistics/surface_points.dat}
+            ;
+            \addplot3 [
+                surf,
+                colormap name = Blues,
+            ]
+                table [
+                    x=X,
+                    y=Y,
+                    z=CVQMean,
+                ]
+                {../statistics/surface_points.dat}
+            ;
+
+            \node at (rel axis cs:0.5,-0.3,0) [below, sloped like x axis] {Target ROCA size};
+            \node at (rel axis cs:1,0.6,-0.3) [below, sloped like y axis] {Alphabet size};
+
+            \legend{Median, Mean}
+        \end{axis}
+    \end{tikzpicture}
+
+\subsection{Partial equivalence queries}
+    \begin{tikzpicture}
+        \begin{axis}[
+            zlabel = Number of queries,
+            reverse legend = true,
+        ]
+            \addplot3 [
+                surf,
+                colormap name = Reds,
+            ]
+                table [
+                    x=X,
+                    y=Y,
+                    z=PEQMedian,
+                ]
+                {../statistics/surface_points.dat}
+            ;
+            \addplot3 [
+                surf,
+                colormap name = Blues,
+            ]
+                table [
+                    x=X,
+                    y=Y,
+                    z=PEQMean,
+                ]
+                {../statistics/surface_points.dat}
+            ;
+
+            \node at (rel axis cs:0.5,-0.3,0) [below, sloped like x axis] {Target ROCA size};
+            \node at (rel axis cs:1,0.6,-0.3) [below, sloped like y axis] {Alphabet size};
+
+            \legend{Median, Mean}
+        \end{axis}
+    \end{tikzpicture}
+    
+\subsection{Equivalence queries}
+    \begin{tikzpicture}
+        \begin{axis}[
+            zlabel = Number of queries,
+            reverse legend = true,
+        ]
+            \addplot3 [
+                surf,
+                colormap name = Reds,
+            ]
+                table [
+                    x=X,
+                    y=Y,
+                    z=EQMedian,
+                ]
+                {../statistics/surface_points.dat}
+            ;
+            \addplot3 [
+                surf,
+                colormap name = Blues,
+            ]
+                table [
+                    x=X,
+                    y=Y,
+                    z=EQMean,
+                ]
+                {../statistics/surface_points.dat}
+            ;
+
+            \node at (rel axis cs:0.5,-0.3,0) [below, sloped like x axis] {Target ROCA size};
+            \node at (rel axis cs:1,0.6,-0.3) [below, sloped like y axis] {Alphabet size};
+
+            \legend{Median, Mean}
+        \end{axis}
+    \end{tikzpicture}
+
+\section{Number of rounds}
+Equivalent to \(\mbox{number of processed ROCA counterexamples} + 1\).
+
+    \begin{tikzpicture}
+        \begin{axis}[
+            zlabel = Number of rounds,
+            reverse legend = true,
+        ]
+            \addplot3 [
+                surf,
+                colormap name = Reds,
+            ]
+                table [
+                    x=X,
+                    y=Y,
+                    z=RoundsMedian,
+                ]
+                {../statistics/surface_points.dat}
+            ;
+            \addplot3 [
+                surf,
+                colormap name = Blues,
+            ]
+                table [
+                    x=X,
+                    y=Y,
+                    z=RoundsMean,
+                ]
+                {../statistics/surface_points.dat}
+            ;
+
+            \node at (rel axis cs:0.5,-0.3,0) [below, sloped like x axis] {Target ROCA size};
+            \node at (rel axis cs:1,0.6,-0.3) [below, sloped like y axis] {Alphabet size};
+
+            \legend{Median, Mean}
+        \end{axis}
+    \end{tikzpicture}
+
+\section{Number of operations to make the table nice}
+\subsection{Openness}
+    \begin{tikzpicture}
+        \begin{axis}[
+            zlabel = Number of resolved openness,
+            reverse legend = true,
+        ]
+            \addplot3 [
+                surf,
+                colormap name = Reds,
+            ]
+                table [
+                    x=X,
+                    y=Y,
+                    z=OpennessMedian,
+                ]
+                {../statistics/surface_points.dat}
+            ;
+            \addplot3 [
+                surf,
+                colormap name = Blues,
+            ]
+                table [
+                    x=X,
+                    y=Y,
+                    z=OpennessMean,
+                ]
+                {../statistics/surface_points.dat}
+            ;
+
+            \node at (rel axis cs:0.5,-0.3,0) [below, sloped like x axis] {Target ROCA size};
+            \node at (rel axis cs:1,0.6,-0.3) [below, sloped like y axis] {Alphabet size};
+
+            \legend{Median, Mean}
+        \end{axis}
+    \end{tikzpicture}
+
+\subsection{\(\Sigma\)-inconsistencies}
+    \begin{tikzpicture}
+        \begin{axis}[
+            zlabel = Number of resolved \(\Sigma\)-inconsistencies,
+            reverse legend = true,
+        ]
+            \addplot3 [
+                surf,
+                colormap name = Reds,
+            ]
+                table [
+                    x=X,
+                    y=Y,
+                    z=SigmaMedian,
+                ]
+                {../statistics/surface_points.dat}
+            ;
+            \addplot3 [
+                surf,
+                colormap name = Blues,
+            ]
+                table [
+                    x=X,
+                    y=Y,
+                    z=SigmaMean,
+                ]
+                {../statistics/surface_points.dat}
+            ;
+
+            \node at (rel axis cs:0.5,-0.3,0) [below, sloped like x axis] {Target ROCA size};
+            \node at (rel axis cs:1,0.6,-0.3) [below, sloped like y axis] {Alphabet size};
+
+            \legend{Median, Mean}
+        \end{axis}
+    \end{tikzpicture}
+
+\subsection{\(\bot\)-inconsistencies}
+    \begin{tikzpicture}
+        \begin{axis}[
+            zlabel = Number of resolved \(\bot\)-inconsistencies,
+            reverse legend = true,
+        ]
+            \addplot3 [
+                surf,
+                colormap name = Reds,
+            ]
+                table [
+                    x=X,
+                    y=Y,
+                    z=BotMedian,
+                ]
+                {../statistics/surface_points.dat}
+            ;
+            \addplot3 [
+                surf,
+                colormap name = Blues,
+            ]
+                table [
+                    x=X,
+                    y=Y,
+                    z=BotMean,
+                ]
+                {../statistics/surface_points.dat}
+            ;
+
+            \node at (rel axis cs:0.5,-0.3,0) [below, sloped like x axis] {Target ROCA size};
+            \node at (rel axis cs:1,0.6,-0.3) [below, sloped like y axis] {Alphabet size};
+
+            \legend{Median, Mean}
+        \end{axis}
+    \end{tikzpicture}
+
+\subsubsection{\(\bot\)-inconsistencies resolved by adding separators in \(\widehat{S} \setminus S\)}
+Included in the number of \(\bot\)-inconsistencies.
+
+    \begin{tikzpicture}
+        \begin{axis}[
+            zlabel = Number of resolved mismatches,
+            reverse legend = true,
+        ]
+            \addplot3 [
+                surf,
+                colormap name = Reds,
+            ]
+                table [
+                    x=X,
+                    y=Y,
+                    z=MismatchesMedian,
+                ]
+                {../statistics/surface_points.dat}
+            ;
+            \addplot3 [
+                surf,
+                colormap name = Blues,
+            ]
+                table [
+                    x=X,
+                    y=Y,
+                    z=MismatchesMean,
+                ]
+                {../statistics/surface_points.dat}
+            ;
+
+            \node at (rel axis cs:0.5,-0.3,0) [below, sloped like x axis] {Target ROCA size};
+            \node at (rel axis cs:1,0.6,-0.3) [below, sloped like y axis] {Alphabet size};
+
+            \legend{Median, Mean}
+        \end{axis}
+    \end{tikzpicture}
+
+\section{Size of sets and counterexamples}
+\subsection{Length of the longest counterexample}
+    \begin{tikzpicture}
+        \begin{axis}[
+            zlabel = Length,
+            reverse legend = true,
+        ]
+            \addplot3 [
+                surf,
+                colormap name = Reds,
+            ]
+                table [
+                    x=X,
+                    y=Y,
+                    z=LengthCexMedian,
+                ]
+                {../statistics/surface_points.dat}
+            ;
+            \addplot3 [
+                surf,
+                colormap name = Blues,
+            ]
+                table [
+                    x=X,
+                    y=Y,
+                    z=LengthCexMean,
+                ]
+                {../statistics/surface_points.dat}
+            ;
+
+            \node at (rel axis cs:0.5,-0.3,0) [below, sloped like x axis] {Target ROCA size};
+            \node at (rel axis cs:1,0.6,-0.3) [below, sloped like y axis] {Alphabet size};
+
+            \legend{Median, Mean}
+        \end{axis}
+    \end{tikzpicture}
+
+\subsection{Size of \(R\)}
+    \begin{tikzpicture}
+        \begin{axis}[
+            zlabel = Size of \(R\),
+            reverse legend = true,
+        ]
+            \addplot3 [
+                surf,
+                colormap name = Reds,
+            ]
+                table [
+                    x=X,
+                    y=Y,
+                    z=RMedian,
+                ]
+                {../statistics/surface_points.dat}
+            ;
+            \addplot3 [
+                surf,
+                colormap name = Blues,
+            ]
+                table [
+                    x=X,
+                    y=Y,
+                    z=RMean,
+                ]
+                {../statistics/surface_points.dat}
+            ;
+
+            \node at (rel axis cs:0.5,-0.3,0) [below, sloped like x axis] {Target ROCA size};
+            \node at (rel axis cs:1,0.6,-0.3) [below, sloped like y axis] {Alphabet size};
+
+            \legend{Median, Mean}
+        \end{axis}
+    \end{tikzpicture}
+
+\subsection{Size of \(S\)}
+    \begin{tikzpicture}
+        \begin{axis}[
+            zlabel = Size of \(S\),
+            reverse legend = true,
+        ]
+            \addplot3 [
+                surf,
+                colormap name = Reds,
+            ]
+                table [
+                    x=X,
+                    y=Y,
+                    z=SMedian,
+                ]
+                {../statistics/surface_points.dat}
+            ;
+            \addplot3 [
+                surf,
+                colormap name = Blues,
+            ]
+                table [
+                    x=X,
+                    y=Y,
+                    z=SMean,
+                ]
+                {../statistics/surface_points.dat}
+            ;
+
+            \node at (rel axis cs:0.5,-0.3,0) [below, sloped like x axis] {Target ROCA size};
+            \node at (rel axis cs:1,0.6,-0.3) [below, sloped like y axis] {Alphabet size};
+
+            \legend{Median, Mean}
+        \end{axis}
+    \end{tikzpicture}
+
+\subsection{Size of \(\widehat{S} \setminus S\)}
+    \begin{tikzpicture}
+        \begin{axis}[
+            zlabel = Size of \(\widehat{S} \setminus S\),
+            reverse legend = true,
+        ]
+            \addplot3 [
+                surf,
+                colormap name = Reds,
+            ]
+                table [
+                    x=X,
+                    y=Y,
+                    z=HatSMedian,
+                ]
+                {../statistics/surface_points.dat}
+            ;
+            \addplot3 [
+                surf,
+                colormap name = Blues,
+            ]
+                table [
+                    x=X,
+                    y=Y,
+                    z=HatSMean,
+                ]
+                {../statistics/surface_points.dat}
+            ;
+
+            \node at (rel axis cs:0.5,-0.3,0) [below, sloped like x axis] {Target ROCA size};
+            \node at (rel axis cs:1,0.6,-0.3) [below, sloped like y axis] {Alphabet size};
+
+            \legend{Median, Mean}
+        \end{axis}
+    \end{tikzpicture}
+
+\subsection{Number of bin rows}
+A bin row \(u \in R\) is such that \(C_{\ell}(u) = \bot\).
+This is more for debugging purpose.
+I'm satisfied by the figure, so you can ignore it if you want.
+
+    \begin{tikzpicture}
+        \begin{axis}[
+            zlabel = Number of bin rows,
+            reverse legend = true,
+        ]
+            \addplot3 [
+                surf,
+                colormap name = Reds,
+            ]
+                table [
+                    x=X,
+                    y=Y,
+                    z=BinMedian,
+                ]
+                {../statistics/surface_points.dat}
+            ;
+            \addplot3 [
+                surf,
+                colormap name = Blues,
+            ]
+                table [
+                    x=X,
+                    y=Y,
+                    z=BinMean,
+                ]
+                {../statistics/surface_points.dat}
+            ;
+
+            \node at (rel axis cs:0.5,-0.3,0) [below, sloped like x axis] {Target ROCA size};
+            \node at (rel axis cs:1,0.6,-0.3) [below, sloped like y axis] {Alphabet size};
+
+            \legend{Median, Mean}
+        \end{axis}
+    \end{tikzpicture}
+
+\section{Size of the learned ROCA}
+    \begin{tikzpicture}
+        \begin{axis}[
+            zlabel = Learned ROCA size,
+            reverse legend = true,
+        ]
+            \addplot3 [
+                surf,
+                colormap name = Reds,
+            ]
+                table [
+                    x=X,
+                    y=Y,
+                    z=TargetMedian,
+                ]
+                {../statistics/surface_points.dat}
+            ;
+            \addplot3 [
+                surf,
+                colormap name = Blues,
+            ]
+                table [
+                    x=X,
+                    y=Y,
+                    z=TargetMean,
+                ]
+                {../statistics/surface_points.dat}
+            ;
+
+            \node at (rel axis cs:0.5,-0.3,0) [below, sloped like x axis] {Target ROCA size};
+            \node at (rel axis cs:1,0.6,-0.3) [below, sloped like y axis] {Alphabet size};
+
+            \legend{Median, Mean}
+        \end{axis}
+    \end{tikzpicture}
+
+    
+\end{document}
