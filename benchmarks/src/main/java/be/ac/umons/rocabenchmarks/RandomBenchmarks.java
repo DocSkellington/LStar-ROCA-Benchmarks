@@ -176,7 +176,7 @@ public class RandomBenchmarks {
             results.add(lstar_roca.numberOfRowsUsedToCloseTable());
             results.add(lstar_roca.numberOfSigmaInconsistencies());
             results.add(lstar_roca.numberOfBottomInconsistencies());
-            results.add(lstar_roca.numberOfResolvedMismatches());
+            results.add(lstar_roca.numberOfBottomInconsistenciesResolvedByAddingOnlyForLanguageSuffixes());
             results.add(lstar_roca.getLengthOfTheLongestCounterexample());
             results.add(table.numberOfShortPrefixRows());
             results.add(table.numberOfClassicalSuffixes());

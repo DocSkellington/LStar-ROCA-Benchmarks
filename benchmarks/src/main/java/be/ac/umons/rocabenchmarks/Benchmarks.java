@@ -22,7 +22,7 @@ public class Benchmarks {
         final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy-HH-mm");
         final LocalDateTime now = LocalDateTime.now();
 
-        final Random rand = new Random(170);
+        final Random rand = new Random();
         if (type.equals("random")) {
             final int minSize = Integer.valueOf(args[2]);
             final int maxSize = Integer.valueOf(args[3]);
@@ -84,7 +84,7 @@ public class Benchmarks {
             pathToCSVFolder.toFile().mkdirs();
             Path pathToCSVFile = pathToCSVFolder.resolve("" + timeLimit + "s-" + schemaName + "-" + nTests + "-" + nRepetitions + "-" + dtf.format(now) + ".csv");
             JSONBenchmarks jsonBenchmarks = new JSONBenchmarks(pathToCSVFile, timeout);
-            jsonBenchmarks.runBenchmarks(rand, schema, schemaStore, nTests, nRepetitions, shuffleKeys);
+            jsonBenchmarks.runBenchmarks(rand, schema, schemaName, schemaStore, nTests, nRepetitions, shuffleKeys);
         }
     }
 }

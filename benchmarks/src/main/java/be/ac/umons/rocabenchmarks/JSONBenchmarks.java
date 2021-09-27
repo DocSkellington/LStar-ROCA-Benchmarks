@@ -88,15 +88,15 @@ public class JSONBenchmarks {
         csvPrinter.flush();
     }
 
-    public void runBenchmarks(final Random rand, final Schema schema, final SchemaStore schemaStore, final int nTests,
+    public void runBenchmarks(final Random rand, final Schema schema, final String schemaName, final SchemaStore schemaStore, final int nTests,
             final int nRepetitions, final boolean shuffleKeys) throws GenerationException, InterruptedException, IOException {
         for (int i = 0; i < nRepetitions; i++) {
             System.out.println((i + 1) + "/" + nRepetitions);
-            runExperiment(rand, schema, schemaStore, nTests, shuffleKeys, i);
+            runExperiment(rand, schema, schemaName, schemaStore, nTests, shuffleKeys, i);
         }
     }
 
-    private void runExperiment(final Random rand, final Schema schema, final SchemaStore schemaStore, final int nTests, final boolean shuffleKeys, final int currentId)
+    private void runExperiment(final Random rand, final Schema schema, final String schemaName, final SchemaStore schemaStore, final int nTests, final boolean shuffleKeys, final int currentId)
             throws GenerationException, InterruptedException, IOException {
         final ExecutorService executor = Executors.newSingleThreadExecutor();
         SimpleProfiler.reset();
@@ -170,7 +170,7 @@ public class JSONBenchmarks {
             results.add(lstar_roca.numberOfRowsUsedToCloseTable());
             results.add(lstar_roca.numberOfSigmaInconsistencies());
             results.add(lstar_roca.numberOfBottomInconsistencies());
-            results.add(lstar_roca.numberOfResolvedMismatches());
+            results.add(lstar_roca.numberOfBottomInconsistenciesResolvedByAddingOnlyForLanguageSuffixes());
             results.add(lstar_roca.getLengthOfTheLongestCounterexample());
             results.add(table.numberOfShortPrefixRows());
             results.add(table.numberOfClassicalSuffixes());
@@ -179,9 +179,9 @@ public class JSONBenchmarks {
             results.add(alphabet.size());
             results.add(learntROCA.size());
 
-            Path pathToDOTFolder = Paths.get(System.getProperty("user.dir"), "Results", "Random", "Dot");
+            Path pathToDOTFolder = Paths.get(System.getProperty("user.dir"), "Results", "JSON", "Dot");
             pathToDOTFolder.toFile().mkdirs();
-            Path pathToDotFile = pathToDOTFolder.resolve(String.valueOf(schema.getTitle()) + "-" + String.valueOf(currentId) + ".dot");
+            Path pathToDotFile = pathToDOTFolder.resolve(schemaName + "-" + String.valueOf(currentId) + ".dot");
             FileWriter writer = new FileWriter(pathToDotFile.toFile());
             GraphDOT.write(learntROCA, writer);
         } else if (error) {

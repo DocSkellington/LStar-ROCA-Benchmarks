@@ -23,7 +23,7 @@ public class WordConversion {
     public static Word<JSONSymbol> fromJSONDocumentToJSONSymbolWord(JSONObject document, boolean shuffleKeys, Random rand) {
         WordBuilder<JSONSymbol> wordBuilder = new WordBuilder<>();
         wordBuilder.add(toSymbol("{"));
-        fromJSONObjectToJSONWord(document, rand, wordBuilder);
+        fromJSONObjectToJSONWord(document, shuffleKeys, rand, wordBuilder);
         wordBuilder.add(toSymbol("}"));
         return wordBuilder.toWord();
     }
@@ -36,9 +36,11 @@ public class WordConversion {
         return fromJSONDocumentToJSONSymbolWord(document, true);
     }
 
-    private static void fromJSONObjectToJSONWord(JSONObject object, Random rand, WordBuilder<JSONSymbol> wordBuilder) {
+    private static void fromJSONObjectToJSONWord(JSONObject object, boolean shuffleKeys, Random rand, WordBuilder<JSONSymbol> wordBuilder) {
         List<String> keys = new ArrayList<>(object.keySet());
-        Collections.shuffle(keys, rand);
+        if (shuffleKeys) {
+            Collections.shuffle(keys, rand);
+        }
         boolean first =  true;
         for (String key : keys) {
             if (!first) {
@@ -50,12 +52,12 @@ public class WordConversion {
             Object o = object.get(key);
             if (o instanceof JSONObject) {
                 wordBuilder.add(toSymbol(":{"));
-                fromJSONObjectToJSONWord((JSONObject) o, rand, wordBuilder);
+                fromJSONObjectToJSONWord((JSONObject) o, shuffleKeys, rand, wordBuilder);
                 wordBuilder.add(toSymbol("}"));
             }
             else if (o instanceof JSONArray) {
                 wordBuilder.add(toSymbol(":["));
-                fromJSONArrayToJSONWord((JSONArray) o, rand, wordBuilder);
+                fromJSONArrayToJSONWord((JSONArray) o, shuffleKeys, rand, wordBuilder);
                 wordBuilder.add(toSymbol("]"));
             }
             else if (o instanceof Boolean) {
@@ -69,7 +71,7 @@ public class WordConversion {
         }
     }
 
-    private static void fromJSONArrayToJSONWord(JSONArray array, Random rand, WordBuilder<JSONSymbol> wordBuilder) {
+    private static void fromJSONArrayToJSONWord(JSONArray array, boolean shuffleKeys, Random rand, WordBuilder<JSONSymbol> wordBuilder) {
         boolean first = true;
         for (Object o : array) {
             if (!first) {
@@ -78,12 +80,12 @@ public class WordConversion {
             first = false;
             if (o instanceof JSONObject) {
                 wordBuilder.add(toSymbol("{"));
-                fromJSONObjectToJSONWord((JSONObject) o, rand, wordBuilder);
+                fromJSONObjectToJSONWord((JSONObject) o, shuffleKeys, rand, wordBuilder);
                 wordBuilder.add(toSymbol("}"));
             }
             else if (o instanceof JSONArray) {
                 wordBuilder.add(toSymbol("["));
-                fromJSONArrayToJSONWord((JSONArray) o, rand, wordBuilder);
+                fromJSONArrayToJSONWord((JSONArray) o, shuffleKeys, rand, wordBuilder);
                 wordBuilder.add(toSymbol("]"));
             }
             else if (o instanceof Boolean) {
