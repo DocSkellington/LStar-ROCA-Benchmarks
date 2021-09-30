@@ -100,13 +100,17 @@ columns = [
     "|S|",
     "|? \\ S|",
     "# of bin rows",
-    "Result target size"
+    "Result ROCA size"
 ]
 numbers = df[["Target ROCA size", "Alphabet size"] + columns]
 numbers = numbers.drop(numbers[numbers[columns[0]] == "Timeout"].index)
 numbers = numbers.drop(numbers[numbers[columns[0]] == "Error"].index)
 for column in columns:
     numbers[column] = pandas.to_numeric(numbers[column])
+
+numbers["|Ŝ|"] = numbers["|S|"] + numbers["|? \\ S|"]
+columns += "|Ŝ|"
+print(numbers)
 
 numbers_grouped = numbers.groupby(by=["Target ROCA size", "Alphabet size"])
 numbers_means = numbers_grouped.mean()
@@ -115,6 +119,20 @@ numbers_medians = numbers_grouped.median()
 # Time columns
 columns = [
     "Total time (ms)",
+]
+total_time = df[["Target ROCA size", "Alphabet size"] + columns]
+total_time = total_time.replace(to_replace="Timeout", value=timelimit_in_s * 1000) # * 1000 because we store milliseconds
+total_time = total_time.drop(total_time[total_time[columns[0]] == "Error"].index)
+for column in columns:
+    total_time[column] = pandas.to_numeric(total_time[column])
+    # From milliseconds to seconds
+    total_time[column] = total_time[column].transform(lambda x: x / 1000)
+
+total_time_grouped = total_time.groupby(by=["Target ROCA size", "Alphabet size"])
+total_time_means = total_time_grouped.mean()
+total_time_medians = total_time_grouped.median()
+
+columns = [
     "ROCA counterexample time (ms)",
     "DFA counterexample time (ms)",
     "Learning ROCA time (ms)",
@@ -122,16 +140,17 @@ columns = [
     "Finding descriptions (ms)"
 ]
 time = df[["Target ROCA size", "Alphabet size"] + columns]
-time = time.replace(to_replace="Timeout", value=timelimit_in_s * 1000) # * 1000 because we store milliseconds
+time = time.drop(time[time[columns[0]] == "Timeout"].index)
 time = time.drop(time[time[columns[0]] == "Error"].index)
+
 for column in columns:
     time[column] = pandas.to_numeric(time[column])
     # From milliseconds to seconds
     time[column] = time[column].transform(lambda x: x / 1000)
 
-timeGrouped = time.groupby(by=["Target ROCA size", "Alphabet size"])
-time_means = timeGrouped.mean()
-time_medians = timeGrouped.median()
+time_grouped = time.groupby(by=["Target ROCA size", "Alphabet size"])
+time_means = time_grouped.mean()
+time_medians = time_grouped.median()
 
 # We compute the surface data points
 Z_all = []
@@ -141,8 +160,10 @@ Z_all.append(("Timeouts", griddata((original_X, original_Y), timeouts_and_errors
 Z_all.append(("Errors", griddata((original_X, original_Y), timeouts_and_errors["Errors"], (X, Y), method="cubic")))
 
 # For numbers and time
+Z_all.append(("TotalTimeMean", griddata((original_X, original_Y), total_time_means["Total time (ms)"], (X, Y), method="cubic")))
+Z_all.append(("TotalTimeMedian", griddata((original_X, original_Y), total_time_medians["Total time (ms)"], (X, Y), method="cubic")))
+
 for newName, column in [
-    ("TotalTime", "Total time (ms)"),
     ("ROCACex", "ROCA counterexample time (ms)"),
     ("DFACex", "DFA counterexample time (ms)"),
     ("LearningROCA", "Learning ROCA time (ms)"),
@@ -160,9 +181,10 @@ for newName, column in [
     ("LengthCex", "Length longest cex"),
     ("R", "|R|"),
     ("S", "|S|"),
-    ("HatS", "|? \\ S|"),
+    ("HatS", "|Ŝ|"),
+    ("HatSMinusS", "|? \\ S|"),
     ("Bin", "# of bin rows"),
-    ("Target", "Result target size")
+    ("Target", "Result ROCA size")
 ]:
     dataframe_means = time_means if "(ms)" in column else numbers_means
     Z_mean = griddata((original_X, original_Y), dataframe_means[column], (X, Y), method="cubic")

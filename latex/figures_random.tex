@@ -12,9 +12,9 @@
     every axis/.append style = {
         grid=both,
         clip=false,
-        xtick={1, ..., 4}, % chktex 26 11
+        xtick={1, ..., 5}, % chktex 26 11
         ytick={1, ..., 5}, % chktex 26 11
-        view/h=40,
+        % view/h=40,
     },
     scaled ticks = false
 }
@@ -66,9 +66,9 @@
     \input{../statistics/timeouts_errors.tex}
 
 \section{Times}
-If a timeout is reached, the value is replaced by \emph{two minutes} (i.e., the time limit).
 \subsection{Total time}
 Time from start to finish.
+If a timeout is reached, the value is replaced by \emph{two minutes} (i.e., the time limit).
 
     \begin{tikzpicture}
         \begin{axis}[
@@ -107,6 +107,8 @@ Time from start to finish.
 
 \subsection{Counterexample time}
 Time to \emph{find} a counterexample, i.e., time taken by the equivalence oracles.
+From now on (until the end of the document), runs that ended up in a timeout are removed from the dataset.
+
 
 \subsubsection{ROCA}
     \begin{tikzpicture}
@@ -220,11 +222,6 @@ Note that it includes the time needed to make the table closed, \(\Sigma\)-, and
     \end{tikzpicture}
 
 \subsection{Making table closed, \(\Sigma\)-, and \(\bot\)-consistent}
-UNUSABLE FOR NOW.
-DATA INCORRECT!
-The code is already corrected.
-New benchmarks are running.
-
     \begin{tikzpicture}
         \begin{axis}[
             zlabel = Time (s),
@@ -742,6 +739,42 @@ Included in the number of \(\bot\)-inconsistencies.
     \begin{tikzpicture}
         \begin{axis}[
             zlabel = Size of \(\widehat{S} \setminus S\),
+            reverse legend = true,
+        ]
+            \addplot3 [
+                surf,
+                colormap name = Reds,
+            ]
+                table [
+                    x=X,
+                    y=Y,
+                    z=HatSMinusSMedian,
+                ]
+                {../statistics/surface_points.dat}
+            ;
+            \addplot3 [
+                surf,
+                colormap name = Blues,
+            ]
+                table [
+                    x=X,
+                    y=Y,
+                    z=HatSMinusSMean,
+                ]
+                {../statistics/surface_points.dat}
+            ;
+
+            \node at (rel axis cs:0.5,-0.3,0) [below, sloped like x axis] {Target ROCA size};
+            \node at (rel axis cs:1,0.6,-0.3) [below, sloped like y axis] {Alphabet size};
+
+            \legend{Median, Mean}
+        \end{axis}
+    \end{tikzpicture}
+
+\subsection{Size of \(\widehat{S}\)}
+    \begin{tikzpicture}
+        \begin{axis}[
+            zlabel = Size of \(\widehat{S}\),
             reverse legend = true,
         ]
             \addplot3 [

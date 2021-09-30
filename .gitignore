@@ -27,7 +27,7 @@ buildNumber.properties
 .vscode/
 
 venv/
-Results/
+benchmarks/Results/
 *.aux
 *.fdb_latexmk
 *.fls
