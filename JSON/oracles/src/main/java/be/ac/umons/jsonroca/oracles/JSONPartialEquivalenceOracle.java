@@ -72,7 +72,8 @@ public class JSONPartialEquivalenceOracle implements EquivalenceOracle.Restricte
             boolean correctForSchema;
             JSONObject document = null;
             try {
-                document = (JSONObject) generator.generate(schema, counterLimit);
+                // counterLimit - 1 in order to have a correct depth (since opening the first object increases the counter but it should not influence the depth)
+                document = (JSONObject) generator.generate(schema, counterLimit - 1);
                 validator.validate(schema, document);
                 correctForSchema = true;
             } catch (JsonGeneratorException e) {

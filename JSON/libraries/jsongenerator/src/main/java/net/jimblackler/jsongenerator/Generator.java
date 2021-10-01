@@ -272,7 +272,7 @@ public class Generator {
         Collection<Object> alreadyIncluded = new HashSet<>();
         JSONArray jsonArray = new JSONArray();
         for (Schema schema1 : schemas) {
-          Object value = generateUnvalidated(schema1, (int) (0.7f * maxTreeSize));
+          Object value = generateUnvalidated(schema1, maxTreeSize - 1);
           if (uniqueItems && !alreadyIncluded.add(value)) {
             continue;
           }
@@ -392,7 +392,7 @@ public class Generator {
             throw new IllegalStateException();
           }
           int size = jsonObject.keySet().size();
-          Object value = generateUnvalidated(entries.getValue(), (int) (0.7f * maxTreeSize));
+          Object value = generateUnvalidated(entries.getValue(), maxTreeSize - 1);
           jsonObject.put(key, value);
           if (jsonObject.keySet().size() != size + 1) {
             throw new IllegalStateException();
