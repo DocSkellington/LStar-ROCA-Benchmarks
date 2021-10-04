@@ -69,6 +69,10 @@ public class JSONEquivalenceOracle implements EquivalenceOracle.ROCAEquivalenceO
     public @Nullable DefaultQuery<JSONSymbol, Boolean> findCounterExample(ROCA<?, JSONSymbol> hypo, Collection<? extends JSONSymbol> inputs) {
         for (int maxTreeSize = 1 ; maxTreeSize <= 100 ; maxTreeSize++) {
             for (int i = 0 ; i < numberTests ; i++) {
+                if (Thread.interrupted()) {
+                    Thread.currentThread().interrupt();
+                    return null;
+                }
                 boolean correctForSchema;
                 JSONObject document = null;
                 try {
