@@ -1,4 +1,4 @@
-Target ROCA size,Alphabet size,Total time (ms),ROCA counterexample time (ms),DFA counterexample time (ms),Learning ROCA time (ms),Table time (ms),Finding descriptions (ms),Membership queries,Counter value queries,Partial equivalence queries,Equivalence queries,Rounds,Openness,Sigma-inconsistencies,Bottom-inconsistencies,Mismatches,Length longest cex,|R|,|S|,|? \ S|,"# of bin rows",Result ROCA size
+Target ROCA size,Alphabet size,Total time (ms),ROCA counterexample time (ms),DFA counterexample time (ms),Learning DFA time (ms),Table time (ms),Finding descriptions (ms),Membership queries,Counter value queries,Partial equivalence queries,Equivalence queries,Rounds,Openness,Sigma-inconsistencies,Bottom-inconsistencies,Mismatches,Length longest cex,|R|,|S|,|? \ S|,"# of bin rows",Result ROCA size
 1,1,0,13,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,1
 1,1,13,1,2,11,1,0,2,1,1,2,2,0,0,0,0,0,1,1,0,0,1
 1,1,2,1,0,1,0,0,3,1,1,2,2,1,0,0,0,0,2,1,0,1,1

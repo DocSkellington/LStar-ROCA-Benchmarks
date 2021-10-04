@@ -1,0 +1,758 @@
+\documentclass{article}
+
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{booktabs}
+
+\pgfplotsset{
+    compat=newest,
+    colormap={Blues}{rgb=(1, 1, 1) rgb=(0, 0, 1)}, % chktex 36
+    colormap={Reds}{rgb=(1, 1, 1) rgb=(1, 0, 0)}, % chktex 36
+    legend pos=north west,
+    every axis/.append style = {
+        grid=both,
+    },
+    scaled ticks = false
+}
+
+\begin{document}
+\section{Timeouts and errors}
+    \begin{tikzpicture}
+        \begin{axis}[
+            xlabel = Target ROCA size,
+            ylabel = Number,
+        ]
+            \addplot [
+                blue,
+            ]
+                table [
+                    x=Target ROCA size,
+                    y=Timeouts,
+                    col sep=comma,
+                ]
+                {../statistics/fixedAlphabetSize.dat}
+            ;
+            \addplot [
+                red,
+            ]
+                table [
+                    x=Target ROCA size,
+                    y=Errors,
+                    col sep=comma,
+                ]
+                {../statistics/fixedAlphabetSize.dat}
+            ;
+
+            \legend{Timeouts, Errors}
+        \end{axis}
+    \end{tikzpicture}
+
+    \input{../statistics/timeouts_errors_fixed_alphabet_size.tex}
+
+\section{Times}
+\subsection{Total time}
+Time from start to finish.
+If a timeout is reached, the value is replaced by \emph{two minutes} (i.e., the time limit).
+
+    \begin{tikzpicture}
+        \begin{axis}[
+            xlabel=Target ROCA,
+            ylabel=Time (s),
+        ]
+            \addplot [
+                blue
+            ]
+                table [
+                    x=Target ROCA size,
+                    y=TotalTimeMean,
+                    col sep=comma,
+                ]
+                {../statistics/fixedAlphabetSize.dat}
+            ;
+            \addplot [
+                red
+            ]
+                table [
+                    x=Target ROCA size,
+                    y=TotalTimeMedian,
+                    col sep=comma,
+                ]
+                {../statistics/fixedAlphabetSize.dat}
+            ;
+
+            \legend{Mean, Median}
+        \end{axis}
+    \end{tikzpicture}
+
+\subsection{Counterexample time}
+Time to \emph{find} a counterexample, i.e., time taken by the equivalence oracles.
+From now on (until the end of the document), runs that ended up in a timeout are removed from the dataset.
+
+\subsubsection{ROCA}
+    \begin{tikzpicture}
+        \begin{axis}[
+            xlabel=Target ROCA,
+            ylabel=Time (s),
+        ]
+            \addplot [
+                blue
+            ]
+                table [
+                    x=Target ROCA size,
+                    y=ROCACexMean,
+                    col sep=comma,
+                ]
+                {../statistics/fixedAlphabetSize.dat}
+            ;
+            \addplot [
+                red
+            ]
+                table [
+                    x=Target ROCA size,
+                    y=ROCACexMedian,
+                    col sep=comma,
+                ]
+                {../statistics/fixedAlphabetSize.dat}
+            ;
+
+            \legend{Mean, Median}
+        \end{axis}
+    \end{tikzpicture}
+
+\subsubsection{DFA}
+    \begin{tikzpicture}
+        \begin{axis}[
+            xlabel=Target ROCA,
+            ylabel=Time (s),
+        ]
+            \addplot [
+                blue
+            ]
+                table [
+                    x=Target ROCA size,
+                    y=DFACexMean,
+                    col sep=comma,
+                ]
+                {../statistics/fixedAlphabetSize.dat}
+            ;
+            \addplot [
+                red
+            ]
+                table [
+                    x=Target ROCA size,
+                    y=DFACexMedian,
+                    col sep=comma,
+                ]
+                {../statistics/fixedAlphabetSize.dat}
+            ;
+
+            \legend{Mean, Median}
+        \end{axis}
+    \end{tikzpicture}
+
+\subsection{Learning a DFA for a fixed counter limit}
+Time to refine the table using an equivalence query's counterexample.
+Note that it includes the time needed to make the table closed, \(\Sigma\)-, and \(\bot\)-consistent.
+
+    \begin{tikzpicture}
+        \begin{axis}[
+            xlabel=Target ROCA,
+            ylabel=Time (s),
+        ]
+            \addplot [
+                blue
+            ]
+                table [
+                    x=Target ROCA size,
+                    y=LearningDFAMean,
+                    col sep=comma,
+                ]
+                {../statistics/fixedAlphabetSize.dat}
+            ;
+            \addplot [
+                red
+            ]
+                table [
+                    x=Target ROCA size,
+                    y=LearningDFAMedian,
+                    col sep=comma,
+                ]
+                {../statistics/fixedAlphabetSize.dat}
+            ;
+
+            \legend{Mean, Median}
+        \end{axis}
+    \end{tikzpicture}
+
+\subsection{Making table closed, \(\Sigma\)-, and \(\bot\)-consistent}
+    \begin{tikzpicture}
+        \begin{axis}[
+            xlabel=Target ROCA,
+            ylabel=Time (s),
+        ]
+            \addplot [
+                blue
+            ]
+                table [
+                    x=Target ROCA size,
+                    y=TableMean,
+                    col sep=comma,
+                ]
+                {../statistics/fixedAlphabetSize.dat}
+            ;
+            \addplot [
+                red
+            ]
+                table [
+                    x=Target ROCA size,
+                    y=TableMedian,
+                    col sep=comma,
+                ]
+                {../statistics/fixedAlphabetSize.dat}
+            ;
+
+            \legend{Mean, Median}
+        \end{axis}
+    \end{tikzpicture}
+
+\subsection{Computing periodic descriptions}
+Time to find the periodic descriptions AND to construct the corresponding ROCAs.
+
+    \begin{tikzpicture}
+        \begin{axis}[
+            xlabel=Target ROCA,
+            ylabel=Time (s),
+        ]
+            \addplot [
+                blue
+            ]
+                table [
+                    x=Target ROCA size,
+                    y=DescriptionsMean,
+                    col sep=comma,
+                ]
+                {../statistics/fixedAlphabetSize.dat}
+            ;
+            \addplot [
+                red
+            ]
+                table [
+                    x=Target ROCA size,
+                    y=DescriptionsMedian,
+                    col sep=comma,
+                ]
+                {../statistics/fixedAlphabetSize.dat}
+            ;
+
+            \legend{Mean, Median}
+        \end{axis}
+    \end{tikzpicture}
+
+\section{Number of queries}
+\subsection{Membership queries}
+    \begin{tikzpicture}
+        \begin{axis}[
+            xlabel=Target ROCA,
+            ylabel=Number of queries,
+        ]
+            \addplot [
+                blue
+            ]
+                table [
+                    x=Target ROCA size,
+                    y=MQMean,
+                    col sep=comma,
+                ]
+                {../statistics/fixedAlphabetSize.dat}
+            ;
+            \addplot [
+                red
+            ]
+                table [
+                    x=Target ROCA size,
+                    y=MQMedian,
+                    col sep=comma,
+                ]
+                {../statistics/fixedAlphabetSize.dat}
+            ;
+
+            \legend{Mean, Median}
+        \end{axis}
+    \end{tikzpicture}
+
+\subsection{Counter value queries}
+
+    \begin{tikzpicture}
+        \begin{axis}[
+            xlabel=Target ROCA,
+            ylabel=Number of queries,
+        ]
+            \addplot [
+                blue
+            ]
+                table [
+                    x=Target ROCA size,
+                    y=CVQMean,
+                    col sep=comma,
+                ]
+                {../statistics/fixedAlphabetSize.dat}
+            ;
+            \addplot [
+                red
+            ]
+                table [
+                    x=Target ROCA size,
+                    y=CVQMedian,
+                    col sep=comma,
+                ]
+                {../statistics/fixedAlphabetSize.dat}
+            ;
+
+            \legend{Mean, Median}
+        \end{axis}
+    \end{tikzpicture}
+
+\subsection{Partial equivalence queries}
+    \begin{tikzpicture}
+        \begin{axis}[
+            xlabel=Target ROCA,
+            ylabel=Number of queries,
+        ]
+            \addplot [
+                blue
+            ]
+                table [
+                    x=Target ROCA size,
+                    y=PEQMean,
+                    col sep=comma,
+                ]
+                {../statistics/fixedAlphabetSize.dat}
+            ;
+            \addplot [
+                red
+            ]
+                table [
+                    x=Target ROCA size,
+                    y=PEQMedian,
+                    col sep=comma,
+                ]
+                {../statistics/fixedAlphabetSize.dat}
+            ;
+
+            \legend{Mean, Median}
+        \end{axis}
+    \end{tikzpicture}
+    
+\subsection{Equivalence queries}
+    \begin{tikzpicture}
+        \begin{axis}[
+            xlabel=Target ROCA,
+            ylabel=Number of queries,
+        ]
+            \addplot [
+                blue
+            ]
+                table [
+                    x=Target ROCA size,
+                    y=EQMean,
+                    col sep=comma,
+                ]
+                {../statistics/fixedAlphabetSize.dat}
+            ;
+            \addplot [
+                red
+            ]
+                table [
+                    x=Target ROCA size,
+                    y=EQMedian,
+                    col sep=comma,
+                ]
+                {../statistics/fixedAlphabetSize.dat}
+            ;
+
+            \legend{Mean, Median}
+        \end{axis}
+    \end{tikzpicture}
+
+\section{Number of rounds}
+Equivalent to \(\mbox{number of processed ROCA counterexamples} + 1\).
+
+    \begin{tikzpicture}
+        \begin{axis}[
+            xlabel=Target ROCA,
+            ylabel=Number of rounds,
+        ]
+            \addplot [
+                blue
+            ]
+                table [
+                    x=Target ROCA size,
+                    y=RoundsMean,
+                    col sep=comma,
+                ]
+                {../statistics/fixedAlphabetSize.dat}
+            ;
+            \addplot [
+                red
+            ]
+                table [
+                    x=Target ROCA size,
+                    y=RoundsMedian,
+                    col sep=comma,
+                ]
+                {../statistics/fixedAlphabetSize.dat}
+            ;
+
+            \legend{Mean, Median}
+        \end{axis}
+    \end{tikzpicture}
+
+\section{Number of operations to make the table nice}
+\subsection{Openness}
+    \begin{tikzpicture}
+        \begin{axis}[
+            xlabel=Target ROCA,
+            ylabel=Number of resolved openness,
+        ]
+            \addplot [
+                blue
+            ]
+                table [
+                    x=Target ROCA size,
+                    y=OpennessMean,
+                    col sep=comma,
+                ]
+                {../statistics/fixedAlphabetSize.dat}
+            ;
+            \addplot [
+                red
+            ]
+                table [
+                    x=Target ROCA size,
+                    y=OpennessMedian,
+                    col sep=comma,
+                ]
+                {../statistics/fixedAlphabetSize.dat}
+            ;
+
+            \legend{Mean, Median}
+        \end{axis}
+    \end{tikzpicture}
+
+\subsection{\(\Sigma\)-inconsistencies}
+    \begin{tikzpicture}
+        \begin{axis}[
+            xlabel=Target ROCA,
+            ylabel=Number of resolved \(\Sigma\)-inconsistencies,
+        ]
+            \addplot [
+                blue
+            ]
+                table [
+                    x=Target ROCA size,
+                    y=SigmaMean,
+                    col sep=comma,
+                ]
+                {../statistics/fixedAlphabetSize.dat}
+            ;
+            \addplot [
+                red
+            ]
+                table [
+                    x=Target ROCA size,
+                    y=SigmaMedian,
+                    col sep=comma,
+                ]
+                {../statistics/fixedAlphabetSize.dat}
+            ;
+
+            \legend{Mean, Median}
+        \end{axis}
+    \end{tikzpicture}
+
+\subsection{\(\bot\)-inconsistencies}
+    \begin{tikzpicture}
+        \begin{axis}[
+            xlabel=Target ROCA,
+            ylabel=Number of resolved \(\bot\)-inconsistencies,
+        ]
+            \addplot [
+                blue
+            ]
+                table [
+                    x=Target ROCA size,
+                    y=BotMean,
+                    col sep=comma,
+                ]
+                {../statistics/fixedAlphabetSize.dat}
+            ;
+            \addplot [
+                red
+            ]
+                table [
+                    x=Target ROCA size,
+                    y=BotMedian,
+                    col sep=comma,
+                ]
+                {../statistics/fixedAlphabetSize.dat}
+            ;
+
+            \legend{Mean, Median}
+        \end{axis}
+    \end{tikzpicture}
+
+\subsubsection{\(\bot\)-inconsistencies resolved by adding separators in \(\widehat{S} \setminus S\)}
+Included in the number of \(\bot\)-inconsistencies.
+
+    \begin{tikzpicture}
+        \begin{axis}[
+            xlabel=Target ROCA,
+            ylabel=Number of resolved \(\bot\)-inconsistencies by adding in \(\widehat{S} \setminus S\),
+        ]
+            \addplot [
+                blue
+            ]
+                table [
+                    x=Target ROCA size,
+                    y=MismatchesMean,
+                    col sep=comma,
+                ]
+                {../statistics/fixedAlphabetSize.dat}
+            ;
+            \addplot [
+                red
+            ]
+                table [
+                    x=Target ROCA size,
+                    y=MismatchesMedian,
+                    col sep=comma,
+                ]
+                {../statistics/fixedAlphabetSize.dat}
+            ;
+
+            \legend{Mean, Median}
+        \end{axis}
+    \end{tikzpicture}
+
+\section{Size of sets and counterexamples}
+\subsection{Length of the longest counterexample}
+    \begin{tikzpicture}
+        \begin{axis}[
+            xlabel=Target ROCA,
+            ylabel=Length,
+        ]
+            \addplot [
+                blue
+            ]
+                table [
+                    x=Target ROCA size,
+                    y=LengthCexMean,
+                    col sep=comma,
+                ]
+                {../statistics/fixedAlphabetSize.dat}
+            ;
+            \addplot [
+                red
+            ]
+                table [
+                    x=Target ROCA size,
+                    y=LengthCexMedian,
+                    col sep=comma,
+                ]
+                {../statistics/fixedAlphabetSize.dat}
+            ;
+
+            \legend{Mean, Median}
+        \end{axis}
+    \end{tikzpicture}
+
+\subsection{Size of \(R\)}
+    \begin{tikzpicture}
+        \begin{axis}[
+            xlabel=Target ROCA,
+            ylabel=Size of \(R\),
+        ]
+            \addplot [
+                blue
+            ]
+                table [
+                    x=Target ROCA size,
+                    y=RMean,
+                    col sep=comma,
+                ]
+                {../statistics/fixedAlphabetSize.dat}
+            ;
+            \addplot [
+                red
+            ]
+                table [
+                    x=Target ROCA size,
+                    y=RMedian,
+                    col sep=comma,
+                ]
+                {../statistics/fixedAlphabetSize.dat}
+            ;
+
+            \legend{Mean, Median}
+        \end{axis}
+    \end{tikzpicture}
+
+\subsection{Size of \(S\)}
+    \begin{tikzpicture}
+        \begin{axis}[
+            xlabel=Target ROCA,
+            ylabel=Size of \(S\),
+        ]
+            \addplot [
+                blue
+            ]
+                table [
+                    x=Target ROCA size,
+                    y=SMean,
+                    col sep=comma,
+                ]
+                {../statistics/fixedAlphabetSize.dat}
+            ;
+            \addplot [
+                red
+            ]
+                table [
+                    x=Target ROCA size,
+                    y=SMedian,
+                    col sep=comma,
+                ]
+                {../statistics/fixedAlphabetSize.dat}
+            ;
+
+            \legend{Mean, Median}
+        \end{axis}
+    \end{tikzpicture}
+
+\subsection{Size of \(\widehat{S} \setminus S\)}
+    \begin{tikzpicture}
+        \begin{axis}[
+            xlabel=Target ROCA,
+            ylabel=Size of \(\widehat{S} \setminus S\),
+        ]
+            \addplot [
+                blue
+            ]
+                table [
+                    x=Target ROCA size,
+                    y=HatSMinusSMean,
+                    col sep=comma,
+                ]
+                {../statistics/fixedAlphabetSize.dat}
+            ;
+            \addplot [
+                red
+            ]
+                table [
+                    x=Target ROCA size,
+                    y=HatSMinusSMedian,
+                    col sep=comma,
+                ]
+                {../statistics/fixedAlphabetSize.dat}
+            ;
+
+            \legend{Mean, Median}
+        \end{axis}
+    \end{tikzpicture}
+
+\subsection{Size of \(\widehat{S}\)}
+    \begin{tikzpicture}
+        \begin{axis}[
+            xlabel=Target ROCA,
+            ylabel=Size of \(\widehat{S}\),
+        ]
+            \addplot [
+                blue
+            ]
+                table [
+                    x=Target ROCA size,
+                    y=HatSMean,
+                    col sep=comma,
+                ]
+                {../statistics/fixedAlphabetSize.dat}
+            ;
+            \addplot [
+                red
+            ]
+                table [
+                    x=Target ROCA size,
+                    y=HatSMedian,
+                    col sep=comma,
+                ]
+                {../statistics/fixedAlphabetSize.dat}
+            ;
+
+            \legend{Mean, Median}
+        \end{axis}
+    \end{tikzpicture}
+
+\subsection{Number of bin rows}
+A bin row \(u \in R\) is such that \(C_{\ell}(u) = \bot\).
+This is more for debugging purpose.
+I'm satisfied by the figure, so you can ignore it if you want.
+
+    \begin{tikzpicture}
+        \begin{axis}[
+            xlabel=Target ROCA,
+            ylabel=Number of bin rows,
+        ]
+            \addplot [
+                blue
+            ]
+                table [
+                    x=Target ROCA size,
+                    y=BinMean,
+                    col sep=comma,
+                ]
+                {../statistics/fixedAlphabetSize.dat}
+            ;
+            \addplot [
+                red
+            ]
+                table [
+                    x=Target ROCA size,
+                    y=BinMedian,
+                    col sep=comma,
+                ]
+                {../statistics/fixedAlphabetSize.dat}
+            ;
+
+            \legend{Mean, Median}
+        \end{axis}
+    \end{tikzpicture}
+
+\section{Size of the learned ROCA}
+    \begin{tikzpicture}
+        \begin{axis}[
+            xlabel=Target ROCA,
+            ylabel=Learned ROCA size,
+        ]
+            \addplot [
+                blue
+            ]
+                table [
+                    x=Target ROCA size,
+                    y=TargetMean,
+                    col sep=comma,
+                ]
+                {../statistics/fixedAlphabetSize.dat}
+            ;
+            \addplot [
+                red
+            ]
+                table [
+                    x=Target ROCA size,
+                    y=TargetMedian,
+                    col sep=comma,
+                ]
+                {../statistics/fixedAlphabetSize.dat}
+            ;
+
+            \legend{Mean, Median}
+        \end{axis}
+    \end{tikzpicture}
+\end{document}
