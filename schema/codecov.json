@@ -5,7 +5,8 @@
   "description": "Schema for codecov.yml files.",
   "type": "object",
   "contentEncoding": "7bit",
-  "required": ["properties"],
+  "required": ["codecov", "coverage"],
+  "additionalProperties": false,
   "definitions": {
     "flag": {
       "type": "object",
@@ -282,6 +283,5 @@
         }
       }
     }
-  },
-  "additionalProperties": false
+  }
 }
