@@ -25,7 +25,7 @@ import be.ac.umons.jsonroca.JSONSymbol;
 import be.ac.umons.jsonroca.WordConversion;
 import de.learnlib.api.oracle.EquivalenceOracle;
 import de.learnlib.api.query.DefaultQuery;
-import net.automatalib.automata.oca.ROCA;
+import net.automatalib.automata.oca.automatoncountervalues.ROCAFromDescription;
 import net.automatalib.words.Word;
 import net.jimblackler.jsongenerator.Configuration;
 import net.jimblackler.jsongenerator.Generator;
@@ -66,7 +66,7 @@ public class JSONEquivalenceOracle implements EquivalenceOracle.ROCAEquivalenceO
     }
 
     @Override
-    public @Nullable DefaultQuery<JSONSymbol, Boolean> findCounterExample(ROCA<?, JSONSymbol> hypo, Collection<? extends JSONSymbol> inputs) {
+    public @Nullable DefaultQuery<JSONSymbol, Boolean> findCounterExample(ROCAFromDescription<?, JSONSymbol> hypo, Collection<? extends JSONSymbol> inputs) {
         for (int maxTreeSize = 1 ; maxTreeSize <= 100 ; maxTreeSize++) {
             for (int i = 0 ; i < numberTests ; i++) {
                 if (Thread.interrupted()) {

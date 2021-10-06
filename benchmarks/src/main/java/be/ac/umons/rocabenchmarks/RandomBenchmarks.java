@@ -46,9 +46,8 @@ import de.learnlib.filter.cache.roca.CounterValueHashCacheOracle;
 import de.learnlib.filter.cache.roca.ROCAHashCacheOracle;
 import de.learnlib.filter.statistic.Counter;
 import de.learnlib.filter.statistic.oracle.CounterValueCounterOracle;
-import de.learnlib.filter.statistic.oracle.ROCACounterEQOracle;
 import de.learnlib.filter.statistic.oracle.ROCACounterOracle;
-import de.learnlib.oracle.equivalence.roca.ROCASimulatorEQOracle;
+import de.learnlib.filter.statistic.oracle.roca.ROCACounterEQOracle;
 import de.learnlib.oracle.equivalence.roca.RestrictedAutomatonCounterEQOracle;
 import de.learnlib.oracle.equivalence.roca.RestrictedAutomatonROCASimulatorEQOracle;
 import de.learnlib.oracle.membership.SimulatorOracle.ROCASimulatorOracle;
@@ -95,6 +94,7 @@ public class RandomBenchmarks {
             "|S|",
             "|Ŝ \\ S|",
             "# of bin rows",
+            "Counter limit",
             "Result ROCA size"
         );
         // @formatter:on
@@ -135,7 +135,7 @@ public class RandomBenchmarks {
         CounterValueCounterOracle<I> counterValueOracle = new CounterValueCounterOracle<>(counterValueCache,
                 "counter value queries");
 
-        EquivalenceOracle.ROCAEquivalenceOracle<I> eqOracle = new ROCASimulatorEQOracle<>(target);
+        EquivalenceOracle.ROCAEquivalenceOracle<I> eqOracle = new ROCAEquivalenceOracle<>(timeout, target);
         ROCACounterEQOracle<I> equivalenceOracle = new ROCACounterEQOracle<>(eqOracle, "equivalence queries");
 
         RestrictedAutomatonROCASimulatorEQOracle<I> partialEqOracle = new RestrictedAutomatonROCASimulatorEQOracle<>(
@@ -202,6 +202,7 @@ public class RandomBenchmarks {
             results.add(table.numberOfClassicalSuffixes());
             results.add(table.numberOfForLanguageOnlySuffixes());
             results.add(table.numberOfBinShortPrefixRows());
+            results.add(lstar_roca.getCounterLimit());
             results.add(learntROCA.size());
 
             Path pathToDOTFolder = Paths.get(System.getProperty("user.dir"), "Results", "Random", "Dot");
