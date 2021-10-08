@@ -1,6 +1,6 @@
 # jsonschemafriend
 
-This is a modified version of jsonschemafriend. The following changes have been made:
+This is a modified version of [jsonschemafriend](https://github.com/jimblackler/jsonschemafriend). The following changes have been made:
  *  `Validator.java`: strings must now exactly be "\S", numbers "\D", and integers "\I", regardless of the schema's requirements.
 
 The rest of this file is the original `README`.

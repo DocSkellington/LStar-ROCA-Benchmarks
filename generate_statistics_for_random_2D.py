@@ -1,6 +1,6 @@
 #!/bin/env python3
 """
-Copyright 2021 University of Mons and University of Antwerp
+Copyright (C) 2021 - University of Mons and University Antwerpen
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@ limitations under the License.
 """
 
 """
-This file reads a CSV file produced by a random benchmarks run and extract statistics.
+This file reads a CSV file produced by a random benchmarks run over a fixed alphabet size and extract statistics.
 These statistics are written in a format that can be used by pgfplots to create 3D surface plots in LaTeX.
 """
 

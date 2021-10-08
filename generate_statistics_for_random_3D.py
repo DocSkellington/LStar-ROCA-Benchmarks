@@ -1,6 +1,6 @@
 #!/bin/env python3
 """
-Copyright 2021 University of Mons and University of Antwerp
+Copyright (C) 2021 - University of Mons and University Antwerpen
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@ limitations under the License.
 """
 
 """
-This file reads a CSV file produced by a random benchmarks run and extract statistics.
+This file reads a CSV file produced by a random benchmarks run over an alphabet varying in size and extract statistics.
 These statistics are written in a format that can be used by pgfplots to create 3D surface plots in LaTeX.
 """
 
@@ -44,7 +44,7 @@ def write_surface_data(filepath: str, data_to_write):
 
 def write_table(filepath: str, df: pandas.DataFrame):
     with open(filepath, "w") as f:
-        f.write(df.to_latex(index=False))
+        f.write(df.to_latex(index=False, escape=False, float_format="%.2f"))
 
 
 filepath = sys.argv[1]
@@ -82,7 +82,12 @@ timeouts_and_errors = pandas.DataFrame({
     "Errors": number_errors
 })
 
-write_table("statistics/timeouts_errors.tex", timeouts_and_errors)
+write_table("statistics/timeouts_errors.tex", timeouts_and_errors.rename(columns={
+    "Target ROCA size": "ROCA size $n$",
+    "Alphabet size": "$|\Sigma|$",
+    "Timeouts": "TO (20 min)",
+    "Errors": "MO (16GB)"
+}))
 
 # Number of queries, sizes of counterexample, of sets, and of learnt ROCA
 columns = [
