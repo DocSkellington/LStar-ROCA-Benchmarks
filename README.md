@@ -77,9 +77,4 @@ These scripts require `pandas`, `numpy`, and `scipy` to be installed.
 Running them is as simple as `python3 generate_statistics_for_random.py {CSVFile} {Timeout}` where `{Timeout}` must be equal to the time limit used for the benchmarks.
 
 More precisely, the first script generates data for creating 3D surface plots, and a table, from the results of random ROCA benchmarks.
-Both files can be found in the `statistics/` folder.
-The `latex/` folder contains the LaTeX file `figures_random.tex` to generate a PDF from these two files.
-Running `latexmk -pdf figures_random.tex` is sufficient to compile the PDF.
-
-The second script creates only LaTeX tables.
-Again, a LaTeX file to compile the tables into a single PDF is given in the `latex/` folder, and `latexmk -pdf figures_json.tex` produces the PDF for JSON benchmarks.
+All files will be generated in the `statistics/` folder.

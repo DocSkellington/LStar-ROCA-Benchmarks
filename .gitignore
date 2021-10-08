@@ -33,3 +33,7 @@ benchmarks/Results/
 *.fls
 *.log
 *.synctex*
+
+latex/
+Dot/
+statistics/
