@@ -1,5 +1,6 @@
 # Benchmarks for Realtime One-Counter Automata Learning
 This project is used to run benchmarks on the [LearnLib](https://github.com/learnlib/learnlib)'s implementation of Realtime One-Counter Automata (ROCA).
+It is distributed under the Apache 2.0 License.
 
 ## Random benchmarks
 The random benchmarks are straightforward: for fixed ROCA and alphabet sizes, we generate an ROCA, and run the learning algorithm on it.
