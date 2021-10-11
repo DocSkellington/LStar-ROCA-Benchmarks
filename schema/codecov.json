@@ -21,22 +21,6 @@
         }
       }
     },
-    "layout": {
-      "anyOf": [{ }, {
-        "enum": [
-          "header",
-          "footer",
-          "diff",
-          "file",
-          "files",
-          "flag",
-          "flags",
-          "reach",
-          "sunburst",
-          "uncovered"
-        ]
-      }]
-    },
     "notification": {
       "type": "object",
       "properties": {
@@ -45,7 +29,6 @@
         "threshold": { "type": "string" },
         "message": { "type": "string" },
         "flags": { "type": "string" },
-        "base": { "enum": ["parent", "pr", "auto"] },
         "only_pulls": { "type": "boolean" },
         "paths": { "type": "array", "items": { "type": "string" } }
       }
@@ -111,7 +94,6 @@
       "type": "object",
       "properties": {
         "precision": { "type": "integer", "minimum": 0, "maximum": 5 },
-        "round": { "enum": ["down", "up", "nearest"] },
         "range": {
           "type": "string"
         },
@@ -127,7 +109,6 @@
                 "threshold": { "type": "string" },
                 "message": { "type": "string" },
                 "flags": { "type": "string" },
-                "base": { "enum": ["parent", "pr", "auto"] },
                 "only_pulls": { "type": "boolean" },
                 "paths": { "type": "array", "items": { "type": "string" } },
                 "channel": { "type": "string" },
@@ -145,7 +126,6 @@
                 "threshold": { "type": "string" },
                 "message": { "type": "string" },
                 "flags": { "type": "string" },
-                "base": { "enum": ["parent", "pr", "auto"] },
                 "only_pulls": { "type": "boolean" },
                 "paths": { "type": "array", "items": { "type": "string" } },
                 "attachments": {
@@ -162,7 +142,6 @@
                 "threshold": { "type": "string" },
                 "message": { "type": "string" },
                 "flags": { "type": "string" },
-                "base": { "enum": ["parent", "pr", "auto"] },
                 "only_pulls": { "type": "boolean" },
                 "paths": { "type": "array", "items": { "type": "string" } }
               }
@@ -176,7 +155,6 @@
                 "threshold": { "type": "string" },
                 "message": { "type": "string" },
                 "flags": { "type": "string" },
-                "base": { "enum": ["parent", "pr", "auto"] },
                 "only_pulls": { "type": "boolean" },
                 "paths": { "type": "array", "items": { "type": "string" } },
                 "card": { "type": "boolean" },
@@ -191,7 +169,6 @@
                 "threshold": { "type": "string" },
                 "message": { "type": "string" },
                 "flags": { "type": "string" },
-                "base": { "enum": ["parent", "pr", "auto"] },
                 "only_pulls": { "type": "boolean" },
                 "paths": { "type": "array", "items": { "type": "string" } }
               }
@@ -204,7 +181,6 @@
                 "threshold": { "type": "string" },
                 "message": { "type": "string" },
                 "flags": { "type": "string" },
-                "base": { "enum": ["parent", "pr", "auto"] },
                 "only_pulls": { "type": "boolean" },
                 "paths": { "type": "array", "items": { "type": "string" } },
                 "layout": { "$ref": "#/definitions/layout" },
@@ -264,7 +240,6 @@
             "require_base": { "type": "boolean" },
             "require_head": { "type": "boolean" },
             "branches": { "type": "array", "items": { "type": "string" } },
-            "behavior": { "enum": ["default", "once", "new", "spammy"] },
             "flags": { "type": "array", "items": { "$ref": "#/definitions/flag" } },
             "paths": { "type": "array", "items": { "type": "string" } }
           }
