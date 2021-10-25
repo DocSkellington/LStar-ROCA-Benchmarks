@@ -51,14 +51,16 @@ filepath = sys.argv[1]
 timelimit_in_s = int(sys.argv[2])
 df = pandas.read_csv(filepath)
 
+df = df[df["Alphabet size"] <= 4] # Too much timeouts for size = 5
+
 # Grouping by input values
 dfGrouped = df.groupby(by=["Target ROCA size", "Alphabet size"])
 
 # Meshgrid (for 3D surface plots)
 original_X = [x[0] for x in dfGrouped.groups.keys()]
 original_Y = [x[1] for x in dfGrouped.groups.keys()]
-X = np.linspace(min(original_X), max(original_X), len(original_X))
-Y = np.linspace(min(original_Y), max(original_Y), len(original_Y))
+X = np.linspace(min(original_X), max(original_X), 10)
+Y = np.linspace(min(original_Y), max(original_Y), 10)
 X, Y = np.meshgrid(X, Y)
 
 # Retrieving number of timeouts and errors

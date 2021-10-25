@@ -29,13 +29,14 @@ The columns of the CSV file are as following:
   * "Length longest cex": the length of the longest counterexample, ROCA and DFA alike.
   * "|R|", "|S|", "|Ŝ \ S|": the number of short prefixes, classical suffixes (with counter values), and "only for language" suffixes (without counter values).
   * "# of bin rows": the number of short prefix rows that represent the bin state.
+  * "Counter limit": the counter limit of the table at the end of the learning process.
   * "Result target size": the size of the learned ROCA.
 
 ## JSON benchmarks
 The JSON-based benchmarks aim to construct an ROCA accepting the same set of JSON documents than a given JSON Schema.
 In order to be able to learn a JSON Schema, some assumptions must be made:
   * Strings are equal to `"\S"`, integers to `"\I"`, and numbers to `"\D"`.
-  * For every key `key` of an object, `key` is considered a single input symbol in the alphabet.
+  * For every key `key` of an object, `"key"` is considered a single input symbol in the alphabet.
   * The alphabet grows in size according to the new symbols present in the ROCA and DFA counterexamples.
 
 The resulting ROCA's transitions match with these assumptions.
@@ -63,19 +64,23 @@ To run benchmarks based on randomly generated ROCAs, run `java -jar benchmarks/t
 To run benchmarks based on JSON Schemas, run `java -jar benchmarks/target/rocabenchmarks-0.1-SNAPSHOT-jar-with-dependencies.jar json {Timeout} {filePath} [nTests [nRepetitions [shuffleKeys]]]` where:
   * `{Timeout}` is the time limit in seconds allowed for each learning process (i.e., for each generated ROCA). Mandatory argument.
   * `{filePath}` is the path to the JSON Schema.
-  * `nTests` is the number of tests to execute in the (partial) equivalence oracles.
-  * `nRepetitions` is the number of times the experiment must be repeated.
+  * `nTests` is the number of tests to execute in the (partial) equivalence oracles. Default value: 1000.
+  * `nRepetitions` is the number of times the experiment must be repeated. Default value: 1000.
   * `shuffleKeys` decides whether the keys of the objects must be shuffled.
     If false, the ROCA assumes a fixed order on the keys.
     That does not satisfy JSON Schema requirement but allows a faster learning algorithm.
+    Default value: true.
 
-## Generating figures
+## Generating statistical data
 This project also includes two Python 3 scripts to generate statistical figures from the results:
   * `generate_statistics_for_random.py` for random ROCA benchmarks.
   * `generate_statistics_for_json.py` for JSON benchmarks.
 
 These scripts require `pandas`, `numpy`, and `scipy` to be installed.
-Running them is as simple as `python3 generate_statistics_for_random.py {CSVFile} {Timeout}` where `{Timeout}` must be equal to the time limit used for the benchmarks.
 
-More precisely, the first script generates data for creating 3D surface plots, and a table, from the results of random ROCA benchmarks.
-All files will be generated in the `statistics/` folder.
+  * For random benchmarks, run `python3 generate_statistics_for_random.py {CSVFile} {Timeout}` where `{Timeout}` must be equal to the time limit used for the benchmarks.
+  Two files are produced in `statistics/`.
+  One is a LaTeX table (requiring `booktabs`) listing the number of timeouts and out of memory errors by pair of alphabet and target ROCA size.
+  The second file contains data that can be used by `PGFPlots` to display 3D surface plots.
+  * For JSON benchmarks, the command is `python3 generate_statistics_for_json.py {CSVFile} {Timeout} {Name}`.
+  A single file containing a LaTeX table is produced in `statistics/{Name}.json`.
