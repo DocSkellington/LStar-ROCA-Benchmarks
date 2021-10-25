@@ -51,7 +51,7 @@ Run `mvn clean install` in the `JSON` directory to locally install the JSON-base
 A `jar` file including the dependencies will be produced in `benchmarks/target`.
 
 ## Running random benchmarks
-To run benchmarks based on randomly generated ROCAs, run `java -jar benchmarks/target/rocabenchmarks-0.1-SNAPSHOT-jar-with-dependencies.jar random {Timeout} {minROCASize} {maxROCASize} [minAlphabetSize [maxAlphabetSize [numberRepetitions]]]` where:
+To run benchmarks based on randomly generated ROCAs, run `java -jar benchmarks/target/rocabenchmarks-1.0-jar-with-dependencies.jar random {Timeout} {minROCASize} {maxROCASize} [minAlphabetSize [maxAlphabetSize [numberRepetitions]]]` where:
   * `{Timeout}` is the time limit in seconds allowed for each learning process (i.e., for each generated ROCA). Mandatory argument.
   * `{minROCASize}` is the minimal ROCA size to consider for the random generation. Mandatory argument.
   * `{maxROCASize}` is the maximal ROCA size to consider for the random generation. Mandatory argument.
@@ -61,7 +61,7 @@ To run benchmarks based on randomly generated ROCAs, run `java -jar benchmarks/t
 
 
 ## Running JSON benchmarks
-To run benchmarks based on JSON Schemas, run `java -jar benchmarks/target/rocabenchmarks-0.1-SNAPSHOT-jar-with-dependencies.jar json {Timeout} {filePath} [nTests [nRepetitions [shuffleKeys]]]` where:
+To run benchmarks based on JSON Schemas, run `java -jar benchmarks/target/rocabenchmarks-1.0-jar-with-dependencies.jar json {Timeout} {filePath} [nTests [nRepetitions [shuffleKeys]]]` where:
   * `{Timeout}` is the time limit in seconds allowed for each learning process (i.e., for each generated ROCA). Mandatory argument.
   * `{filePath}` is the path to the JSON Schema.
   * `nTests` is the number of tests to execute in the (partial) equivalence oracles. Default value: 1000.
