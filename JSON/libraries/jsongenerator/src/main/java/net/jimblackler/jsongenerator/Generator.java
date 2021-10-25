@@ -26,6 +26,7 @@ import static net.jimblackler.jsongenerator.ValueUtils.getLong;
 import static net.jimblackler.jsonschemafriend.TypeInferrer.getNonProhibitedTypes;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -88,7 +89,7 @@ public class Generator {
     anySchema = schemaStore.loadSchema(true);
     try {
       patternReverser = new PatternReverser();
-    } catch (IOException e) {
+    } catch (IOException | URISyntaxException e) {
       throw new GenerationException(e);
     }
   }

@@ -1,10 +1,13 @@
+/**
+ * This file was modified to prevent the code from requiring an Internet connection to run.
+ */
 package net.jimblackler.jsongenerator;
 
 import static net.jimblackler.jsonschemafriend.CacheLoader.load;
 import static net.jimblackler.jsonschemafriend.StreamUtils.streamToString;
 
 import java.io.IOException;
-import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Random;
 import javax.script.ScriptException;
 
@@ -12,9 +15,10 @@ public class PatternReverser {
   private final javax.script.ScriptEngine scriptEngine =
       new javax.script.ScriptEngineManager().getEngineByName("js");
 
-  public PatternReverser() throws IOException {
-    String randexp_js = load(URI.create(
-        "https://raw.githubusercontent.com/fent/randexp.js/master/build/randexp.min.js"));
+  public PatternReverser() throws IOException, URISyntaxException {
+    String randexp_js = load(PatternReverser.class.getResource("/randexp.min.js").toURI());
+    // String randexp_js = load(URI.create(
+    //     "https://raw.githubusercontent.com/fent/randexp.js/master/build/randexp.min.js"));
     String random_js = streamToString(PatternReverser.class.getResourceAsStream("/random.js"));
     try {
       scriptEngine.eval("window = {};");
