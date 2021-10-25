@@ -23,7 +23,7 @@ limitations under the License.
     -->
     <groupId>be.ac.umons.rocabenchmarks</groupId>
     <artifactId>rocabenchmarks</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <version>1.0</version>
 
     <name>ROCA benchmarks</name>
     <description>Benchmarks for L*-based learning algorithm for ROCAs</description>
@@ -78,7 +78,7 @@ limitations under the License.
         <javadoc-plugin.conf.release>8</javadoc-plugin.conf.release>
 
         <!-- Dependency versions -->
-        <jsonroca.version>0.1-SNAPSHOT</jsonroca.version>
+        <jsonroca.version>1.0</jsonroca.version>
         <automatalib.version>0.11.0-SNAPSHOT</automatalib.version>
         <learnlib.version>0.17.0-SNAPSHOT</learnlib.version>
         <testng.version>7.4.0</testng.version>

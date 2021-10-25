@@ -23,7 +23,7 @@ limitations under the License.
     -->
     <groupId>be.ac.umons.jsonroca</groupId>
     <artifactId>jsonroca</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <version>1.0</version>
     <packaging>pom</packaging>
 
     <name>Learning JSON Schema</name>
