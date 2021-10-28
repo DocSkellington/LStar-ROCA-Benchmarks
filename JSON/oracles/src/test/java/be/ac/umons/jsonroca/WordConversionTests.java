@@ -34,9 +34,9 @@ public class WordConversionTests {
 
     @Test
     public void fromStringToSymbols() {
-        String base = "hello";
-        Word<JSONSymbol> result = WordConversion.fromStringToJSONSymbolWord(base);
-        Word<JSONSymbol> target = Word.fromSymbols(toSymbol("hello"));
+        String base = "{\"string\": \"hello\"}";
+        Word<JSONSymbol> result = WordConversion.fromJSONDocumentToJSONSymbolWord(new JSONObject(base));
+        Word<JSONSymbol> target = Word.fromSymbols(toSymbol("{"), toSymbol("\"string\""), toSymbol(":"), toSymbol("\"hello\""), toSymbol("}"));
         Assert.assertEquals(result, target);
 
         base = "{\"pro\":{\"i\":\"\\\\I\"},\"other\":\"\\\\D\"}";
@@ -52,7 +52,7 @@ public class WordConversionTests {
 
         // Arrays and booleans
         base = "{\"arrays\": [\"\\\\I\", \"\\\\I\", \"\\\\I\"], \"boolean\": false, \"other\": true}";
-        result = WordConversion.fromStringToJSONSymbolWord(base);
+        result = WordConversion.fromJSONDocumentToJSONSymbolWord(new JSONObject(base));
         target1 = JSONSymbol.toWord("{", "\"arrays\"", ":[", "\"\\I\"", ",", "\"\\I\"", ",", "\"\\I\"", "]", ",", "\"boolean\"", ":", "false", ",", "\"other\"", ":", "true", "}");
         target2 = JSONSymbol.toWord("{", "\"arrays\"", ":[", "\"\\I\"", ",", "\"\\I\"", ",", "\"\\I\"", "]", ",", "\"other\"", ":", "true", ",", "\"boolean\"", ":", "false", "}");
         Word<JSONSymbol> target3 = JSONSymbol.toWord("{", "\"boolean\"", ":", "false", ",", "\"arrays\"", ":[", "\"\\I\"", ",", "\"\\I\"", ",", "\"\\I\"", "]", ",", "\"other\"", ":", "true", "}");
@@ -76,7 +76,7 @@ public class WordConversionTests {
 
         // Closing two objects in a row
         base = "{\"obj\": {\"obj\": {}}}";
-        result = WordConversion.fromStringToJSONSymbolWord(base);
+        result = WordConversion.fromJSONDocumentToJSONSymbolWord(new JSONObject(base));
         target = JSONSymbol.toWord("{", "\"obj\"", ":{", "\"obj\"", ":{", "}", "}", "}");
         Assert.assertEquals(result, target);
     }
