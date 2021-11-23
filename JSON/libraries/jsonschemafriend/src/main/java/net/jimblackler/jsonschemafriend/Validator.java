@@ -501,7 +501,7 @@ public class Validator {
               selfPropertyHandler.accept(property);
             }
           } catch (InvalidRegexException e) {
-            LOG.warning("Invalid regex: " + e.getMessage());
+            // LOG.warning("Invalid regex: " + e.getMessage());
           }
         }
         Schema propertyNames = schema.getPropertyNames();
@@ -586,13 +586,16 @@ public class Validator {
     if (enums != null) {
       boolean matchedOne = false;
       Object o = makeComparable(object);
-      for (Object value : enums) {
-        if (o.equals(makeComparable(value))) {
-          matchedOne = true;
-          break;
-        }
-      }
-      if (!matchedOne) {
+      // for (Object value : enums) {
+      //   if (o.equals(makeComparable(value))) {
+      //     matchedOne = true;
+      //     break;
+      //   }
+      // }
+      // if (!matchedOne) {
+      //   error.accept(new EnumError(uri, document, schema));
+      // }
+      if(!o.equals("\\S")) {
         error.accept(new EnumError(uri, document, schema));
       }
     }

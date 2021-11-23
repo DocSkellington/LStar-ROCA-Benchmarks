@@ -111,7 +111,8 @@ public class Generator {
       object = generateUnvalidated(schema, maxTreeSize);
     }
 
-    return fixUp(schema, object, this, random, patternReverser);
+    // return fixUp(schema, object, this, random, patternReverser);
+    return object;
   }
 
   private Object generateUnvalidated(Schema schema, int maxTreeSize) {
@@ -176,7 +177,8 @@ public class Generator {
     String type = randomElement(random, types);
     Collection<Object> enums = combinedSchema.getEnums();
     if (enums != null) {
-      return randomElement(random, enums);
+      // return randomElement(random, enums);
+      return "\\S";
     }
     switch (type) {
       case "boolean": {
@@ -347,7 +349,9 @@ public class Generator {
         Schema additionalProperties = schema.getAdditionalProperties();
         Schema propertyNameSchema = schema.getPropertyNames();
 
+        /*
         while (schemas.keySet().size() < length) {
+          System.out.println("Looping " + schemas.keySet().size() + " " + length);
           if (patternPropertiesPatterns != null && !patternPropertiesPatterns.isEmpty()) {
             Collection<Schema> patternPropertiesSchema = schema.getPatternPropertiesSchema();
             int index = random.nextInt(patternPropertiesPatterns.size());
@@ -370,7 +374,10 @@ public class Generator {
               continue;
             }
           }
-          if (additionalProperties != null && additionalProperties.isFalse()) {
+          // if (additionalProperties != null && additionalProperties.isFalse()) {
+          //   break;
+          // }
+          if (additionalProperties != null) {
             break;
           }
 
@@ -391,18 +398,19 @@ public class Generator {
             propertyName = randomString(random, 1, MAX_ADDITIONAL_PROPERTIES_KEY_LENGTH);
           }
 
-          if (additionalProperties == null) {
-            schemas.put(propertyName, anySchema);
-            if (random.nextBoolean()) {
-              // We don't want to generate too many of these, as they look like gibberish, and one
-              // or two makes the point.
-              break;
-            }
-          } else {
-            schemas.put(propertyName, additionalProperties);
-            continue;
-          }
+          // if (additionalProperties == null) {
+          //   schemas.put(propertyName, anySchema);
+          //   if (random.nextBoolean()) {
+          //     // We don't want to generate too many of these, as they look like gibberish, and one
+          //     // or two makes the point.
+          //     break;
+          //   }
+          // } else {
+          //   schemas.put(propertyName, additionalProperties);
+          //   continue;
+          // }
         }
+        */
 
         JSONObject jsonObject = new JSONObject();
         for (Map.Entry<String, Schema> entries : schemas.entrySet()) {
