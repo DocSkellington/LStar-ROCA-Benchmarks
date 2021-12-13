@@ -23,9 +23,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Random;
 
-import net.jimblackler.jsonschemafriend.GenerationException;
-import net.jimblackler.jsonschemafriend.Schema;
-import net.jimblackler.jsonschemafriend.SchemaStore;
+import be.ac.umons.jsonschematools.JSONSchema;
+import be.ac.umons.jsonschematools.JSONSchemaException;
+import be.ac.umons.jsonschematools.JSONSchemaStore;
 
 /**
  * Main class for the benchmarks.
@@ -35,7 +35,7 @@ import net.jimblackler.jsonschemafriend.SchemaStore;
  * @author Gaëtan Staquet
  */
 public class Benchmarks {
-    public static void main(String[] args) throws InterruptedException, IOException, GenerationException {
+    public static void main(String[] args) throws InterruptedException, IOException, JSONSchemaException {
         final String type = args[0];
         final int timeLimit = Integer.valueOf(args[1]);
 
@@ -86,11 +86,11 @@ public class Benchmarks {
                 }
             }
 
-            SchemaStore schemaStore = new SchemaStore();
-            Schema schema;
+            JSONSchemaStore schemaStore = new JSONSchemaStore();
+            JSONSchema schema;
             try {
                 URL url = filePath.toUri().toURL();
-                schema = schemaStore.loadSchema(url.toURI(), false);
+                schema = schemaStore.load(url.toURI());
             } catch (Exception e) {
                 e.printStackTrace();
                 return;
@@ -105,7 +105,7 @@ public class Benchmarks {
             pathToCSVFolder.toFile().mkdirs();
             Path pathToCSVFile = pathToCSVFolder.resolve("" + timeLimit + "s-" + schemaName + "-" + nTests + "-" + nRepetitions + "-" + shuffleKeys + "-" + dtf.format(now) + ".csv");
             JSONBenchmarks jsonBenchmarks = new JSONBenchmarks(pathToCSVFile, timeout);
-            jsonBenchmarks.runBenchmarks(rand, schema, schemaName, schemaStore, nTests, nRepetitions, shuffleKeys);
+            jsonBenchmarks.runBenchmarks(rand, schema, schemaName, nTests, nRepetitions, shuffleKeys);
         }
     }
 }

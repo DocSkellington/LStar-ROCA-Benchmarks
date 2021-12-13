@@ -20,9 +20,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -37,11 +39,13 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 
 import be.ac.umons.jsonroca.JSONSymbol;
-import be.ac.umons.jsonroca.algorithm.LStarROCAGrowingAlphabet;
 import be.ac.umons.jsonroca.oracles.JSONCounterValueOracle;
 import be.ac.umons.jsonroca.oracles.JSONEquivalenceOracle;
 import be.ac.umons.jsonroca.oracles.JSONMembershipOracle;
 import be.ac.umons.jsonroca.oracles.JSONPartialEquivalenceOracle;
+import be.ac.umons.jsonschematools.AbstractConstants;
+import be.ac.umons.jsonschematools.JSONSchema;
+import be.ac.umons.jsonschematools.JSONSchemaException;
 import de.learnlib.algorithms.lstar.roca.LStarROCA;
 import de.learnlib.algorithms.lstar.roca.ObservationTableWithCounterValuesROCA;
 import de.learnlib.algorithms.lstar.roca.ROCAExperiment;
@@ -57,11 +61,9 @@ import de.learnlib.oracle.equivalence.roca.RestrictedAutomatonCounterEQOracle;
 import de.learnlib.util.statistics.SimpleProfiler;
 import net.automatalib.automata.oca.ROCA;
 import net.automatalib.serialization.dot.GraphDOT;
-import net.automatalib.words.GrowingAlphabet;
-import net.automatalib.words.impl.GrowingMapAlphabet;
-import net.jimblackler.jsonschemafriend.GenerationException;
-import net.jimblackler.jsonschemafriend.Schema;
-import net.jimblackler.jsonschemafriend.SchemaStore;
+import net.automatalib.words.Alphabet;
+import net.automatalib.words.VPDAlphabet;
+import net.automatalib.words.impl.DefaultVPDAlphabet;
 
 /**
  * Benchmarks based on JSON documents and Schemas.
@@ -69,6 +71,9 @@ import net.jimblackler.jsonschemafriend.SchemaStore;
  * @author Gaëtan Staquet
  */
 public class JSONBenchmarks {
+    private static final int MAX_PROPERTIES = 10;
+    private static final int MAX_ITEMS = 10;
+
     private final CSVPrinter csvPrinter;
     private final int nColumns;
     private final Duration timeout;
@@ -107,19 +112,19 @@ public class JSONBenchmarks {
         csvPrinter.flush();
     }
 
-    public void runBenchmarks(final Random rand, final Schema schema, final String schemaName, final SchemaStore schemaStore, final int nTests,
-            final int nRepetitions, final boolean shuffleKeys) throws GenerationException, InterruptedException, IOException {
+    public void runBenchmarks(final Random rand, final JSONSchema schema, final String schemaName, final int nTests,
+            final int nRepetitions, final boolean shuffleKeys) throws InterruptedException, IOException, JSONSchemaException {
         for (int i = 0; i < nRepetitions; i++) {
             System.out.println((i + 1) + "/" + nRepetitions);
-            runExperiment(rand, schema, schemaName, schemaStore, nTests, shuffleKeys, i);
+            runExperiment(rand, schema, schemaName, nTests, shuffleKeys, i);
         }
     }
 
-    private void runExperiment(final Random rand, final Schema schema, final String schemaName, final SchemaStore schemaStore, final int nTests, final boolean shuffleKeys, final int currentId)
-            throws GenerationException, InterruptedException, IOException {
+    private void runExperiment(final Random rand, final JSONSchema schema, final String schemaName, final int nTests, final boolean shuffleKeys, final int currentId)
+            throws InterruptedException, IOException, JSONSchemaException {
         final ExecutorService executor = Executors.newSingleThreadExecutor();
         SimpleProfiler.reset();
-        GrowingAlphabet<JSONSymbol> alphabet = new GrowingMapAlphabet<>();
+        Alphabet<JSONSymbol> alphabet = extractSymbolsFromSchema(schema);
 
         MembershipOracle.ROCAMembershipOracle<JSONSymbol> sul = new JSONMembershipOracle(schema);
         ROCAHashCacheOracle<JSONSymbol> sulCache = new ROCAHashCacheOracle<>(sul);
@@ -131,15 +136,14 @@ public class JSONBenchmarks {
                 "counter value queries");
 
         EquivalenceOracle.RestrictedAutomatonEquivalenceOracle<JSONSymbol> partialEqOracle = new JSONPartialEquivalenceOracle(
-                nTests, schema, schemaStore, rand, shuffleKeys);
+                nTests, MAX_PROPERTIES, MAX_ITEMS, schema, rand, shuffleKeys);
         RestrictedAutomatonCounterEQOracle<JSONSymbol> partialEquivalenceOracle = new RestrictedAutomatonCounterEQOracle<>(
                 partialEqOracle, "partial equivalence queries");
 
-        EquivalenceOracle.ROCAEquivalenceOracle<JSONSymbol> eqOracle = new JSONEquivalenceOracle(nTests, schema,
-                schemaStore, rand, shuffleKeys);
+        EquivalenceOracle.ROCAEquivalenceOracle<JSONSymbol> eqOracle = new JSONEquivalenceOracle(nTests, MAX_PROPERTIES, MAX_ITEMS, schema, rand, shuffleKeys);
         ROCACounterEQOracle<JSONSymbol> equivalenceOracle = new ROCACounterEQOracle<>(eqOracle, "equivalence queries");
 
-        LStarROCAGrowingAlphabet<JSONSymbol> lstar_roca = new LStarROCAGrowingAlphabet<>(membershipOracle,
+        LStarROCA<JSONSymbol> lstar_roca = new LStarROCA<>(membershipOracle,
                 counterValueOracle, partialEquivalenceOracle, alphabet);
         ROCAExperiment<JSONSymbol> experiment = new ROCAExperiment<>(lstar_roca, equivalenceOracle, alphabet);
         experiment.setLogModels(false);
@@ -224,5 +228,36 @@ public class JSONBenchmarks {
         } else {
             return counter.getCount();
         }
+    }
+
+    private static VPDAlphabet<JSONSymbol> extractSymbolsFromSchema(final JSONSchema schema) throws JSONSchemaException {
+        final Set<JSONSymbol> internalSymbols = new HashSet<>();
+        final Set<JSONSymbol> callSymbols = new HashSet<>();
+        final Set<JSONSymbol> returnSymbols = new HashSet<>();
+
+        callSymbols.add(JSONSymbol.toSymbol("{"));
+        callSymbols.add(JSONSymbol.toSymbol(":{"));
+        callSymbols.add(JSONSymbol.toSymbol("["));
+        callSymbols.add(JSONSymbol.toSymbol(":["));
+
+        returnSymbols.add(JSONSymbol.toSymbol("}"));
+        returnSymbols.add(JSONSymbol.toSymbol("]"));
+
+        internalSymbols.add(JSONSymbol.toSymbol(","));
+        internalSymbols.add(JSONSymbol.toSymbol(":"));
+        internalSymbols.add(JSONSymbol.toSymbol("true"));
+        internalSymbols.add(JSONSymbol.toSymbol("false"));
+        internalSymbols.add(JSONSymbol.toSymbol("\"" + AbstractConstants.stringConstant + "\""));
+        internalSymbols.add(JSONSymbol.toSymbol("\"" + AbstractConstants.integerConstant + "\""));
+        internalSymbols.add(JSONSymbol.toSymbol("\"" + AbstractConstants.numberConstant + "\""));
+        internalSymbols.add(JSONSymbol.toSymbol("\"" + AbstractConstants.enumConstant + "\""));
+
+        schema.getAllKeysDefinedInSchema().
+            stream().
+            map(k -> "\"" + k + "\"").
+            map(k -> JSONSymbol.toSymbol(k)).
+            forEach(k -> internalSymbols.add(k));
+
+        return new DefaultVPDAlphabet<>(internalSymbols, callSymbols, returnSymbols);
     }
 }

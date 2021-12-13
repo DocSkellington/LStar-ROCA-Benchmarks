@@ -17,6 +17,7 @@ package be.ac.umons.jsonroca.oracles;
 import static be.ac.umons.jsonroca.JSONSymbol.toSymbol;
 import static be.ac.umons.jsonroca.JSONSymbol.toWord;
 
+import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
 import java.net.URL;
 
@@ -24,19 +25,19 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import be.ac.umons.jsonroca.JSONSymbol;
+import be.ac.umons.jsonschematools.JSONSchema;
+import be.ac.umons.jsonschematools.JSONSchemaException;
+import be.ac.umons.jsonschematools.JSONSchemaStore;
 import net.automatalib.words.Word;
-import net.jimblackler.jsonschemafriend.GenerationException;
-import net.jimblackler.jsonschemafriend.Schema;
-import net.jimblackler.jsonschemafriend.SchemaStore;
 
 
 /**
  * @author Gaëtan Staquet
  */
 public class MembershipOracleTests {
-    private JSONMembershipOracle createOracle(URL schemaURL) throws GenerationException, URISyntaxException {
-        SchemaStore schemaStore = new SchemaStore();
-        Schema schema = schemaStore.loadSchema(schemaURL.toURI(), false);
+    private JSONMembershipOracle createOracle(URL schemaURL) throws FileNotFoundException, JSONSchemaException, URISyntaxException {
+        JSONSchemaStore schemaStore = new JSONSchemaStore();
+        JSONSchema schema = schemaStore.load(schemaURL.toURI());
         return new JSONMembershipOracle(schema);
     }
 
@@ -48,7 +49,7 @@ public class MembershipOracleTests {
     }
 
     @Test
-    public void testSimpleStringSchema() throws GenerationException, URISyntaxException {
+    public void testSimpleStringSchema() throws URISyntaxException, FileNotFoundException, JSONSchemaException {
         URL schemaURL = getClass().getResource("/singleString.json");
         JSONMembershipOracle oracle = createOracle(schemaURL);
 
@@ -63,7 +64,7 @@ public class MembershipOracleTests {
     }
 
     @Test
-    public void testNumbersSchema() throws GenerationException, URISyntaxException {
+    public void testNumbersSchema() throws URISyntaxException, FileNotFoundException, JSONSchemaException {
         URL schemaURL = getClass().getResource("/numbers.json");
         JSONMembershipOracle oracle = createOracle(schemaURL);
         
