@@ -69,13 +69,12 @@ public class JSONPartialEquivalenceOracle implements EquivalenceOracle.Restricte
                 return null;
             }
             boolean correctForSchema;
-            JSONObject document = null;
+            JSONObject document;
             try {
-                // counterLimit - 1 in order to have a correct depth (since opening the first object increases the counter but it should not influence the depth)
-                document = (JSONObject) generator.generate(schema, counterLimit - 1);
+                document = (JSONObject) generator.generate(schema, counterLimit);
                 correctForSchema = validator.validate(schema, document);
             } catch (GeneratorException | JSONException | JSONSchemaException e) {
-                e.printStackTrace();
+                e.printStackTrace(System.err);
                 return null;
             }
 

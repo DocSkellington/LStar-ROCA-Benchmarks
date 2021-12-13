@@ -60,7 +60,7 @@ public class JSONMembershipOracle implements SingleQueryOracleROCA<JSONSymbol> {
         try {
             return validator.validate(schema, json);
         } catch (JSONSchemaException e) {
-            e.printStackTrace();
+            e.printStackTrace(System.err);
             return false;
         }
     }
@@ -71,9 +71,9 @@ public class JSONMembershipOracle implements SingleQueryOracleROCA<JSONSymbol> {
     }
 
     public static String escapeSymbolsForJSON(String string) {
-        // We escape the "\S", "\I", and "\D" symbols in the document (to avoid errors from JSONObject)
+        // We escape the "\S", "\E", "\I", and "\D" symbols in the document (to avoid errors from JSONObject)
         // That means we replace every \\([SID]) by \\\\$1. We need to escape each \ in the Java code
         // We also want to replace only the symbols in the values (not in the keys). So, we add a positive look-ahead check
-        return string.replaceAll("\\\\([SID])((?=[,\\]}\\s])|(?=\"[,}\\]]))", "\\\\\\\\$1");
+        return string.replaceAll("\\\\([SIDE])((?=[,\\]}\\s])|(?=\"[,}\\]]))", "\\\\\\\\$1");
     }
 }

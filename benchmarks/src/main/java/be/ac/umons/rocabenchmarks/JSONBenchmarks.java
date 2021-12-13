@@ -167,6 +167,7 @@ public class JSONBenchmarks {
             handler.cancel(true);
             finished = false;
         } catch (ExecutionException e) {
+            e.printStackTrace(System.err);
             handler.cancel(true);
             error = true;
             finished = false;

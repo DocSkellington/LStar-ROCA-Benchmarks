@@ -92,7 +92,7 @@ public class Benchmarks {
                 URL url = filePath.toUri().toURL();
                 schema = schemaStore.load(url.toURI());
             } catch (Exception e) {
-                e.printStackTrace();
+                e.printStackTrace(System.err);
                 return;
             }
 
@@ -100,6 +100,7 @@ public class Benchmarks {
             System.out.println("Schema name: " + schemaName + "; schema contents: " + schema);
             System.out.println("Number of tests for equivalence: " + nTests);
             System.out.println("Number of repetitions: " + nRepetitions);
+            System.out.println("Shuffling keys? " + shuffleKeys);
 
             Path pathToCSVFolder = Paths.get(System.getProperty("user.dir"), "Results", "JSON");
             pathToCSVFolder.toFile().mkdirs();

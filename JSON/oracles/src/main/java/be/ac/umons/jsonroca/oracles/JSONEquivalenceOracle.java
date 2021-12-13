@@ -74,7 +74,7 @@ public class JSONEquivalenceOracle implements EquivalenceOracle.ROCAEquivalenceO
                     document = (JSONObject) generator.generate(schema, maxTreeSize, rand);
                     correctForSchema = validator.validate(schema, document);
                 } catch (GeneratorException | JSONException | JSONSchemaException e) {
-                    e.printStackTrace();
+                    e.printStackTrace(System.err);
                     return null;
                 }
 
