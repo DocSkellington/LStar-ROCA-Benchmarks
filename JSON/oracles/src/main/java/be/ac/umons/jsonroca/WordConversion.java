@@ -105,8 +105,11 @@ public class WordConversion {
             else if (o instanceof Boolean) {
                 wordBuilder.add(toSymbol(o.toString()));
             }
-            else {
+            else if (o != null) {
                 wordBuilder.add(toSymbol("\"" + o.toString() + "\""));
+            }
+            else {
+                wordBuilder.add(toSymbol("null"));
             }
         }
     }
