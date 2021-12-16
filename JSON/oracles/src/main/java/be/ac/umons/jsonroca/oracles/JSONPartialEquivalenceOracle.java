@@ -63,6 +63,15 @@ public class JSONPartialEquivalenceOracle implements EquivalenceOracle.Restricte
 
     @Override
     public @Nullable DefaultQuery<JSONSymbol, Boolean> findCounterExample(DFA<?, JSONSymbol> hypothesis, Collection<? extends JSONSymbol> inputs) {
+        if (counterLimit == 0) {
+            if (hypothesis.accepts(Word.epsilon())) {
+                return new DefaultQuery<>(Word.epsilon(), false);
+            }
+            else {
+                return null;
+            }
+        }
+
         for (int i = 0 ; i < numberTests ; i++) {
             if (Thread.interrupted()) {
                 Thread.currentThread().interrupt();
